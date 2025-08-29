@@ -8,19 +8,19 @@
     "net9.0": []
   },
   "packageFolders": {
-    "C:\\Users\\chris\\.nuget\\packages\\": {}
+    "C:\\Users\\aronh\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chris\\Chirp.CLI\\Chirp.CLI.csproj",
+      "projectUniqueName": "C:\\Users\\aronh\\OneDrive\\Dokumenter\\GitHub\\Chirp\\Chirp.CLI.csproj",
       "projectName": "Chirp.CLI",
-      "projectPath": "C:\\Users\\chris\\Chirp.CLI\\Chirp.CLI.csproj",
-      "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chris\\Chirp.CLI\\obj\\",
+      "projectPath": "C:\\Users\\aronh\\OneDrive\\Dokumenter\\GitHub\\Chirp\\Chirp.CLI.csproj",
+      "packagesPath": "C:\\Users\\aronh\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\aronh\\OneDrive\\Dokumenter\\GitHub\\Chirp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\aronh\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
