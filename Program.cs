@@ -1,7 +1,6 @@
-﻿List<string> cheeps = new() {"Hello, BDSA students!", "Welcome to the course!", "I hope you had s good summer."};
+﻿string[] files = File.ReadAllLines(@"chirp_cli_db.csv");
 
-foreach (var cheep in cheeps)
+foreach (var file in files)
 {
-    Console.WriteLine(cheep);
-    Thread.Sleep(1000);
+    Console.WriteLine(file);    
 }
