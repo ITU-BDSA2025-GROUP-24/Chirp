@@ -37,7 +37,7 @@ void read()
 void cheep(string cheeping)
 {
     StringBuilder s = new StringBuilder();
-    string name = System.Security.Principal.WindowsIdentity.GetCurrent().Name + " ";
+    string name = Environment.UserName;
     String tidDato = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ";
     s.Append(name + " @ " + tidDato + cheeping);
     String newCheep =  s.ToString();
