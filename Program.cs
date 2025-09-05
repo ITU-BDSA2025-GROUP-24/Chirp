@@ -1,5 +1,7 @@
 ﻿
+using System.Collections;
 using System.Text;
+using Chirp.CLI;
 
 string[] files = new string[10];
 try
@@ -19,7 +21,10 @@ if (args[0] == "read")
     cheep(args[1]);
 }
 void read()
-{
+{ 
+    Console.WriteLine(Parser.ComposeCheep(files));
+    
+    /*
     foreach (var file in files)
     {
         string[] bigParts = file.Split('"');
@@ -32,6 +37,7 @@ void read()
         TidDato = TidDato.AddMinutes(120);
         Console.WriteLine(parts[0] + " @ " + TidDato.ToShortDateString() + " "+ TidDato.ToLongTimeString() + " " + parts[1]);
     }
+    */
 }
 
 void cheep(string cheeping)
