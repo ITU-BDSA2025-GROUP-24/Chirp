@@ -1,19 +1,28 @@
 ﻿using System.Globalization;
+using System.Text;
 using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace Chirp.CLI;
 
-public class Parser
+public static class Parser
 {
     public static IEnumerable<Cheep> ComposeCheep(string[] args)
     {
-        using (var reader = new StreamReader("chirp_cli_db.csv"))
-        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+        var cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            csv.Context.RegisterClassMap<CheepMap>();
-            var records = csv.GetRecords<Cheep>();
-            return records;
-        }
+            HasHeaderRecord = true,
+            TrimOptions = TrimOptions.Trim,                 // trims all field values
+            PrepareHeaderForMatch = h => h.Header.Trim(),   // trims header names like " Message"
+            IgnoreBlankLines = true,
+            DetectColumnCountChanges = true
+        };
+
+        using var reader = new StreamReader("chirp_cli_db.csv", Encoding.UTF8);
+        using var csv = new CsvReader(reader, cfg);
+        csv.Context.RegisterClassMap<CheepMap>();
+
+        return csv.GetRecords<Cheep>().ToList();           // materialize before disposing
     }
 }
 

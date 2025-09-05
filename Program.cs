@@ -19,25 +19,15 @@ if (args[0] == "read")
 } else if (args[0] == "cheep")
 {
     cheep(args[1]);
+    Cheep hey = new Cheep();
 }
 void read()
 { 
-    Console.WriteLine(Parser.ComposeCheep(files));
-    
-    /*
-    foreach (var file in files)
+    var cheeps = Parser.ComposeCheep(args);
+    foreach (var c in cheeps)
     {
-        string[] bigParts = file.Split('"');
-        bigParts[0] = bigParts[0].Split(',')[0];
-        bigParts[2] = bigParts[2].Split(',')[1];
-        string[] parts = bigParts;
-        long tid = long.Parse(parts[2]);
-        DateTime TidDato = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        TidDato = TidDato.AddSeconds(tid);
-        TidDato = TidDato.AddMinutes(120);
-        Console.WriteLine(parts[0] + " @ " + TidDato.ToShortDateString() + " "+ TidDato.ToLongTimeString() + " " + parts[1]);
+       UserInterface.WriteOutCheep(c);
     }
-    */
 }
 
 void cheep(string cheeping)

@@ -2,12 +2,13 @@
 
 namespace Chirp.CLI;
 
-public class CheepMap : ClassMap<Cheep> {
+public sealed class CheepMap : ClassMap<Cheep>
+{
     public CheepMap()
     {
-        Map<object>(m => m.Author).Name("Author");
-        Map<object>(m => m.Message).Name("Message");
-        Map<object>(m => m.Timestamp).Name("Timestamp");
+        Map(m => m.Author).Name("Author");
+        Map(m => m.Message).Name("Message");      // CsvHelper handles quotes/commas/newlines
+        Map(m => m.Timestamp).Name("Timestamp");
     }
 }
     
