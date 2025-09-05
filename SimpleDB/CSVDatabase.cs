@@ -9,7 +9,7 @@ namespace SimpleDB;
 
 public class CSVDatabase<T> : IDatabaseRepository<T>
 {
-	string filePath; 
+	private string filePath; 
 	
 	public CSVDatabase(string filePath = "../../chirp_cli_db.csv")
 	{
@@ -23,6 +23,12 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
 	
 	public IEnumerable<T> Read(int? limit = null)
 	{
-	  
+		List<T>? record = null; 
+		using (var reader = new StreamReader(filePath))
+		using (var csv = new CsvReader(reader,
+			       CultureInfo.InvariantCulture)) //From https://joshclose.github.io/CsvHelper/
+		{
+			record = csv.GetRecords<T>().ToList();
+		}
 	}
 }
