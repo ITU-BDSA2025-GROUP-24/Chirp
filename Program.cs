@@ -32,17 +32,5 @@ void read()
 
 void cheep(string cheeping)
 {
-    StringBuilder s = new StringBuilder();
-    string name = Environment.UserName;
-    String tidDato = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ";
-    s.Append(name + " @ " + tidDato + cheeping);
-    String newCheep =  s.ToString();
-    Console.WriteLine(newCheep);
-    StreamWriter sw = new StreamWriter(@"chirp_cli_db.csv",true);
-    s.Clear();
-
-    long time = DateTimeOffset.Now.ToUnixTimeSeconds();
-    s.Append(name + "," + '"' + cheeping + '"' + "," +time);
-    sw.WriteLine(s.ToString());
-    sw.Close();
+    Parser.StoreCheep(cheeping);
 }
