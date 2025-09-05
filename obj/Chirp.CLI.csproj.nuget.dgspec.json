@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\chris\\Documents\\GitHub\\Chirp\\Chirp.CLI.csproj": {}
+    "C:\\Users\\chris\\Documents\\github\\Chirp\\Chirp.CLI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\chris\\Documents\\GitHub\\Chirp\\Chirp.CLI.csproj": {
+    "C:\\Users\\chris\\Documents\\github\\Chirp\\Chirp.CLI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\chris\\Documents\\GitHub\\Chirp\\Chirp.CLI.csproj",
+        "projectUniqueName": "C:\\Users\\chris\\Documents\\github\\Chirp\\Chirp.CLI.csproj",
         "projectName": "Chirp.CLI",
-        "projectPath": "C:\\Users\\chris\\Documents\\GitHub\\Chirp\\Chirp.CLI.csproj",
+        "projectPath": "C:\\Users\\chris\\Documents\\github\\Chirp\\Chirp.CLI.csproj",
         "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\chris\\Documents\\GitHub\\Chirp\\obj\\",
+        "outputPath": "C:\\Users\\chris\\Documents\\github\\Chirp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -47,6 +47,10 @@
             "CsvHelper": {
               "target": "Package",
               "version": "[33.1.0, )"
+            },
+            "docopt.net": {
+              "target": "Package",
+              "version": "[0.8.1, )"
             }
           },
           "imports": [

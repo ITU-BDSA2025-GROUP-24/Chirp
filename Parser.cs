@@ -7,7 +7,7 @@ namespace Chirp.CLI;
 
 public static class Parser
 {
-    public static IEnumerable<Cheep> ComposeCheep(string[] args)
+    public static IEnumerable<Cheep> ComposeCheep()
     {
         var cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
