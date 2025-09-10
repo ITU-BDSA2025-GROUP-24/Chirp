@@ -9,7 +9,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
 	private string filePath;
 
-	public CsvDatabase(string filePath = "../data/chirp_cli_db.csv")
+	public CsvDatabase(string filePath = "../Chirp/data/chirp_cli_db.csv")
 	{
 		this.filePath = filePath;
 		
