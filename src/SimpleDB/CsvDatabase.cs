@@ -13,13 +13,15 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 	{
 		this.filePath = filePath;
 		
-		/*   //Checking path for .csv
+		   //Checking path for .csv
+		   /*
 		 Console.WriteLine($"Current working directory: {Directory.GetCurrentDirectory()}");
 		Console.WriteLine($"Looking for file at relative path: {filePath}");
 		Console.WriteLine($"Full resolved path: {Path.GetFullPath(filePath)}");
 		Console.WriteLine($"File exists at that path: {File.Exists(filePath)}");
 		Console.WriteLine();
 		*/
+
 	}
 
 	public IEnumerable<T> Read(int? limit = null)
