@@ -1,6 +1,7 @@
 ﻿namespace Chirp.CLI;
 
-public class Cheep
+public record Cheep(string Author, string Message, long Timestamp);
+/*public record Cheep
 {
     public string Author
     {
@@ -9,4 +10,4 @@ public class Cheep
     }
     public string Message { get; set; }
     public long Timestamp { get; set; }
-}
+}*/
