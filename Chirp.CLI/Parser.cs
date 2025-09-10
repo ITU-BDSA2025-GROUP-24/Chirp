@@ -7,7 +7,7 @@ namespace Chirp.CLI;
 
 public static class Parser
 {
-    public static IEnumerable<Cheep> ComposeCheep()
+    public static IEnumerable<Cheep> ComposeCheep(string[] args)
     {
         var cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -23,29 +23,6 @@ public static class Parser
         csv.Context.RegisterClassMap<CheepMap>();
 
         return csv.GetRecords<Cheep>().ToList();           // materialize before disposing
-    }
-
-    public static void StoreCheep(String cheeping)
-    {
-        Cheep newCheep = new Cheep();
-        newCheep.Author = Environment.UserName;
-        newCheep.Message = cheeping;
-        newCheep.Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-        var records = new List<Cheep>
-        {
-           newCheep
-        };
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            // Don't write the header again.
-            HasHeaderRecord = false,
-        };
-        using (var stream = File.Open("chirp_cli_db.csv", FileMode.Append))
-        using (var writer = new StreamWriter(stream))
-        using (var csv = new CsvWriter(writer, config))
-        {
-            csv.WriteRecords(records);
-        }
     }
 }
 
