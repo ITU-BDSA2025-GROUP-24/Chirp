@@ -2,11 +2,11 @@
 
 public class UserInterface
 {
-    public static void WriteOutCheep(Cheep Cheep)
+    public static void WriteOutCheep(Cheep cheep)
     {
-        var when = DateTimeOffset.FromUnixTimeSeconds(Cheep.Timestamp)
+        var when = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp)
             .ToLocalTime()
             .ToString("yyyy-MM-dd HH:mm");
-        Console.WriteLine($"[{when}] {Cheep.Author}: {Cheep.Message}");
+        Console.WriteLine($"[{when}] {cheep.Author}: {cheep.Message}");
     }
 }
