@@ -9,7 +9,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
 	private string filePath;
 
-	public CsvDatabase(string filePath = "../../Github/Chirp/data/chirp_cli_db.csv")
+	public CsvDatabase(string filePath = "../data/chirp_cli_db.csv")
 	{
 		this.filePath = filePath;
 		
@@ -21,7 +21,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 		Console.WriteLine($"File exists at that path: {File.Exists(filePath)}");
 		Console.WriteLine();
 		*/
-		
+
 	}
 
 	public IEnumerable<T> Read(int? limit = null)
