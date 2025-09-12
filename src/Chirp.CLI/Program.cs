@@ -1,13 +1,8 @@
 ﻿
 using System.Collections;
-using System.Text;
 using Chirp.CLI;
 using SimpleDB;
-using System;
-using System.Linq;
 using DocoptNet;
-using System.Linq;
-using System.Collections; // for IEnumerable
 IDatabaseRepository<Cheep> dbRepository = new CsvDatabase<Cheep>();
 const string Usage = @"Chirp.
 
