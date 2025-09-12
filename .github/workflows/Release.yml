@@ -24,9 +24,9 @@ jobs:
         run: |
             tag=$(git describe --tags --abbrev=0)
             
-            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os win -c Release -o "App-$tag-windows"
-            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os linux -c Release -o "App-$tag-linux"
-            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os osx -c Release -o "App-$tag-macos"
+            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net9.0 --os win -c Release -o "App-$tag-windows"
+            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net9.0 --os linux -c Release -o "App-$tag-linux"
+            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net9.0 --os osx -c Release -o "App-$tag-macos"
             
             7z a -tzip "App-$tag-windows.zip" "App-$tag-windows/*"
             7z a -tzip "App-$tag-linux.zip" "App-$tag-linux/*"
