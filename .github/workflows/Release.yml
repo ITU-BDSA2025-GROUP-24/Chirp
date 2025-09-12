@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 9.0.304
           
@@ -37,8 +37,8 @@ jobs:
             rm -r "App-$tag-macos"
             
       - name: Publish
-        uses: softprops/action-gh-release@v4
+        uses: softprops/action-gh-release@v3
         with:
           files: "App*"
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
