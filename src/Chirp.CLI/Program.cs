@@ -3,10 +3,54 @@ using System.Collections;
 using System.Text;
 using Chirp.CLI;
 using SimpleDB;
+using System;
+using System.Linq;
+using DocoptNet;
+using System.Linq;
+using System.Collections; // for IEnumerable
+IDatabaseRepository<Cheep> dbRepository = new CsvDatabase<Cheep>();
+const string Usage = @"Chirp.
 
+Usage:
+  chirp read
+  chirp post <message>...
+  chirp (-h | --help)
+  chirp --version
+
+Options:
+  -h --help     Show help.
+  --version     Show version.
+";
+
+try
+{
+    var argsDict = new Docopt().Apply(Usage, args, version: "Chirp 1.0", exit: true);
+
+    if (argsDict["read"].IsTrue)
+    {
+        // TODO: load and print cheeps from your DB
+        Console.WriteLine("Reading cheeps...");
+        // e.g., var cheeps = Parser.ComposeCheep(); foreach (var c in cheeps) UserInterface.WriteOutCheep(c);
+    }
+    else if (argsDict["post"].IsTrue)
+    {
+        var parts = ((IEnumerable)argsDict["<message>"].AsList)
+            .Cast<object>()
+            .Select(o => o?.ToString() ?? "");
+        var message = string.Join(" ", parts);
+        Console.WriteLine($"Posting: {message}");
+        cheep(message);
+        // TODO: save the cheep, e.g., Parser.StoreCheep(message);
+    }
+}
+catch (DocoptInputErrorException e)
+{
+    Console.Error.WriteLine(e.Message);
+    Console.Error.WriteLine(Usage);
+    Environment.Exit(1);
+}
 
 //dbRepository - 'Link'/representation of database 
-IDatabaseRepository<Cheep> dbRepository = new CsvDatabase<Cheep>();
 if (args.Length == 0)
 {
     Console.WriteLine("Please 'read' or 'cheep'");
