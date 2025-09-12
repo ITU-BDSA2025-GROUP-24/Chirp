@@ -1,11 +1,10 @@
 ﻿namespace UnitTestsDB;
 
 using Xunit;
-using Chirp.CLI;
 
 public class UnitTest1
 {
-    
+    public record Cheep(string Author, string Message, long Timestamp);
     
     [Fact]
     public void StoringCheepToDatabase()
