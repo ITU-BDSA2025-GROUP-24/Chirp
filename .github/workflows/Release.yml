@@ -1,0 +1,43 @@
+﻿name: Release.yml
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+    
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.414
+          
+        - name: Build
+          shell: bash
+          run: |
+            tag=$(git describe --tags --abbrev=0)
+            
+            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net8.0 --os win -c Release -o "App-$tag-windows"
+            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net8.0 --os linux -c Release -o "App-$tag-linux"
+            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net8.0 --os osx -c Release -o "App-$tag-macos"
+            
+            7z a -tzip "App-$tag-windows.zip" "App-@tag-windows/*"
+            7z a -tzip "App-$tag-linux.zip" "App-@tag-linux/*"
+            7z a -tzip "App-$tag-macos.zip" "App-@tag-macos/*"
+            
+            rm -r "App-$tag-windows"
+            rm -r "App-$tag-linux"
+            rm -r "App-$tag-macos"
+            
+          - name: Publish
+            uses: softprops/action-gh-release@v4
+            with:
+              files: "App*"
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
