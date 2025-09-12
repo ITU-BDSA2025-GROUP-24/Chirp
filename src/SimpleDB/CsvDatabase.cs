@@ -8,14 +8,15 @@ namespace SimpleDB;
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
 	private string filePath = "../Chirp/data/chirp_cli_db.csv";
-	/*
+	
 	private static CsvDatabase<T> instance = null;
 	private static readonly object padlock = new object();
 	
 
-	CsvDatabase()
+	public CsvDatabase()
 	{
 	}
+	
 	
 	public static CsvDatabase<T> Instance
 	{
@@ -32,10 +33,11 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 		}
 	}
 
-*/
-	//Pre-singleton deisgn:
-	public  CsvDatabase(string filePath = "../Chirp/data/chirp_cli_db.csv")
+
+	/*//Pre-singleton deisgn:
+	public  CsvDatabase()
 	{
+		string filePath = "../Chirp/data/chirp_cli_db.csv";
 		this.filePath = filePath;
 
 		   //Checking path for .csv
@@ -45,11 +47,9 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 		Console.WriteLine($"Full resolved path: {Path.GetFullPath(filePath)}");
 		Console.WriteLine($"File exists at that path: {File.Exists(filePath)}");
 		Console.WriteLine();
-*/
 
 	}
-	
-
+*/
 	public IEnumerable<T> Read(int? limit = null)
 	{
 		//If .csv does not exist then return empty collection to avoid crashing
