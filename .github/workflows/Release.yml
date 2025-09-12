@@ -13,10 +13,14 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions: 
+      contents: write #Write permission when releasing
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+        with: 
+          fetch-depth: 0 
+          
       - name: Setup dotnet
         uses: actions/setup-dotnet@v2
         with:
