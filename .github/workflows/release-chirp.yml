@@ -1,0 +1,114 @@
+name: Release Chirp (single-file, .NET 8)
+
+on:
+  push:
+    tags:
+      - "v*"           # e.g., v1.0.0, v2.3.1
+
+permissions:
+  contents: write      # needed to create a GitHub Release
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  PROJECT_PATH: ./Chirp.CLI/Chirp.CLI.csproj   # <-- change if your path differs
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+  publish_matrix:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [win-x64, linux-x64, osx-x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish single-file (${{ matrix.rid }})
+        run: |
+          dotnet publish "$PROJECT_PATH" \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            -p:PublishSingleFile=true \
+            -p:SelfContained=false \
+            -p:PublishTrimmed=false \
+            --output out/${{ matrix.rid }}
+
+      - name: Make zip name
+        id: names
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME}"  # tag name like v1.2.3
+          BASENAME="Chirp-${VERSION}-${{ matrix.rid }}"
+          ARCHIVE="artifacts/${BASENAME}.zip"
+          echo "archive=$ARCHIVE" >> $GITHUB_OUTPUT
+          echo "basename=$BASENAME" >> $GITHUB_OUTPUT
+
+      - name: Zip publish output
+        run: |
+          mkdir -p artifacts
+          (cd out/${{ matrix.rid }} && zip -r "../${{ steps.names.outputs.basename }}.zip" .)
+          mv out/${{ steps.names.outputs.basename }}.zip "${{ steps.names.outputs.archive }}"
+
+      - name: Upload artifact (${{ matrix.rid }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.names.outputs.basename }}
+          path: ${{ steps.names.outputs.archive }}
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    needs: publish_matrix
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+
+      - name: Create GitHub Release & upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            dist/**/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
