@@ -9,9 +9,16 @@
   
   <ItemGroup>
       <ProjectReference Include="../SimpleDB/SimpleDB.csproj" />
-  </ItemGroup>  
-    
-  <ItemGroup>
+  </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="chirp_cli_db.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="docopt.net" Version="0.8.1" />
   </ItemGroup>
