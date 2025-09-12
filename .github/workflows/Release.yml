@@ -3,8 +3,7 @@ name: Publish
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches: [ main ]
 
 jobs:
   release:
@@ -12,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 9.0.304
           
@@ -28,16 +27,16 @@ jobs:
             dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os linux -c Release -o "App-$tag-linux"
             dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os osx -c Release -o "App-$tag-macos"
             
-            7z a -tzip "App-$tag-windows.zip" "App-@tag-windows/*"
-            7z a -tzip "App-$tag-linux.zip" "App-@tag-linux/*"
-            7z a -tzip "App-$tag-macos.zip" "App-@tag-macos/*"
+            7z a -tzip "App-$tag-windows.zip" "App-$tag-windows/*"
+            7z a -tzip "App-$tag-linux.zip" "App-$tag-linux/*"
+            7z a -tzip "App-$tag-macos.zip" "App-$tag-macos/*"
             
             rm -r "App-$tag-windows"
             rm -r "App-$tag-linux"
             rm -r "App-$tag-macos"
             
       - name: Publish
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         with:
           files: "App*"
         env:
