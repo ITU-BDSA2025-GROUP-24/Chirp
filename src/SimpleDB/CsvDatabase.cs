@@ -7,9 +7,11 @@ namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
+	private string filePath = "../Chirp/data/chirp_cli_db.csv";
+	/*
 	private static CsvDatabase<T> instance = null;
 	private static readonly object padlock = new object();
-	private string filePath = "../Chirp/data/chirp_cli_db.csv";
+	
 
 	CsvDatabase()
 	{
@@ -30,7 +32,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 		}
 	}
 
-
+*/
 	//Pre-singleton deisgn:
 	public  CsvDatabase(string filePath = "../Chirp/data/chirp_cli_db.csv")
 	{
