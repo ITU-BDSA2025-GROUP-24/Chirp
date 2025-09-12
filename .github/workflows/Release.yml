@@ -18,16 +18,16 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.414
+          dotnet-version: 9.0.304
           
       - name: Build
         shell: bash
         run: |
             tag=$(git describe --tags --abbrev=0)
             
-            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net8.0 --os win -c Release -o "App-$tag-windows"
-            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net8.0 --os linux -c Release -o "App-$tag-linux"
-            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net8.0 --os osx -c Release -o "App-$tag-macos"
+            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os win -c Release -o "App-$tag-windows"
+            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os linux -c Release -o "App-$tag-linux"
+            dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os osx -c Release -o "App-$tag-macos"
             
             7z a -tzip "App-$tag-windows.zip" "App-@tag-windows/*"
             7z a -tzip "App-$tag-linux.zip" "App-@tag-linux/*"
@@ -37,9 +37,9 @@ jobs:
             rm -r "App-$tag-linux"
             rm -r "App-$tag-macos"
             
-          - name: Publish
-            uses: softprops/action-gh-release@v4
-            with:
-              files: "App*"
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        uses: softprops/action-gh-release@v4
+        with:
+          files: "App*"
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
