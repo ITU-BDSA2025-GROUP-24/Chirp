@@ -1,4 +1,6 @@
-﻿name: Release.yml
+﻿
+name: Publish
+
 on:
   push:
     tags:
@@ -17,9 +19,9 @@ jobs:
         with:
           dotnet-version: 9.0.304
           
-        - name: Build
-          shell: bash
-          run: |
+      - name: Build
+        shell: bash
+        run: |
             tag=$(git describe --tags --abbrev=0)
             
             dotnet publish src/Chrip.CLI/Chirp.CLI.csproj --framework net9.0 --os win -c Release -o "App-$tag-windows"
