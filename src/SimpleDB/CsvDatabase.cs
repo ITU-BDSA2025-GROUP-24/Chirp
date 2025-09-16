@@ -7,11 +7,19 @@ namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
-	private string filePath;
-
-	public CsvDatabase(string filePath = "../Chirp/data/chirp_cli_db.csv")
+	private string filePath; 
+	private string GetCsvPath()
 	{
-		this.filePath = filePath;
+		if(File.Exists("../../data/chirp_cli_db.csv"))
+			return "../../data/chirp_cli_db.csv";
+		
+		else 
+			return "chirp_cli_db.csv";
+	}
+
+	public CsvDatabase(string? customFilePath = null)
+	{
+		filePath = customFilePath ?? GetCsvPath();
 		
 		   //Checking path for .csv
 		   /*
