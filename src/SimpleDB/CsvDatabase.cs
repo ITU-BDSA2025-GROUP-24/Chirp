@@ -7,20 +7,28 @@ namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
-	private string filePath;
-
-	public CsvDatabase(string filePath = "../Chirp/data/chirp_cli_db.csv")
+	private string filePath; 
+	/*private string GetCsvPath()
 	{
-		this.filePath = filePath;
+		if(File.Exists("../data/chirp_cli_db.csv"))
+			return "../data/chirp_cli_db.csv";
+		
+		else 
+			return "chirp_cli_db.csv";
+	}*/
+
+	public CsvDatabase(string? customFilePath = null)
+	{
+		this.filePath = "chirp_cli_db.csv";
 		
 		   //Checking path for .csv
-		   /*
+		   
 		 Console.WriteLine($"Current working directory: {Directory.GetCurrentDirectory()}");
 		Console.WriteLine($"Looking for file at relative path: {filePath}");
 		Console.WriteLine($"Full resolved path: {Path.GetFullPath(filePath)}");
 		Console.WriteLine($"File exists at that path: {File.Exists(filePath)}");
 		Console.WriteLine();
-		*/
+		
 
 	}
 
