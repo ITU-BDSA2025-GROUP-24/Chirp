@@ -7,7 +7,7 @@ namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
-CSVdatabase-refactor-to-singleton
+
 	private string filePath = "../Chirp/data/chirp_cli_db.csv";
 	
 	private static CsvDatabase<T> instance = null;
@@ -43,7 +43,7 @@ CSVdatabase-refactor-to-singleton
 
 		   //Checking path for .csv
 /*
-=======
+
 	private string filePath; 
 	
 	public CsvDatabase(string? customFilePath = null)
