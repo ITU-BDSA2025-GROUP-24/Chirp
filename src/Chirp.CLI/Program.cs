@@ -1,95 +1,70 @@
 ﻿
-using System.Collections;
-using System.Text;
 using Chirp.CLI;
 using SimpleDB;
+using DocoptNet;
 
-
-//dbRepository - 'Link'/representation of database 
 IDatabaseRepository<Cheep> dbRepository = new CsvDatabase<Cheep>();
-if (args.Length == 0)
-{
-    Console.WriteLine("Please 'read' or 'cheep'");
-    return;
-}
 
-if (args[0] == "read")
+const string Usage = @"Chirp.
+
+Usage:
+  chirp read
+  chirp cheep <message>...
+  chirp (-h | --help)
+";
+
+try
 {
-    read();
+    var argsDict = new Docopt().Apply(Usage, args, exit: true);
+
+    if (argsDict["read"].IsTrue)
+    {
+        //Reads and prints cheeps from database
+        read(); 
+        
+    }
+    else if (argsDict["cheep"].IsTrue)
+    {
+		//Adds cheep to database
+        var message = string.Join(" ", argsDict["<message>"].AsList.Cast<string>());
+        cheep(message);
+    }
 }
-else if (args[0] == "cheep")
+catch (DocoptInputErrorException e)
 {
-    cheep(args[1]);
+    Console.Error.WriteLine(e.Message);
+    Console.Error.WriteLine(Usage);
+    Environment.Exit(1);
 }
 
 void read()
 {
+	UserInterface.ReadingCheeps();
     var cheeps = dbRepository.Read();
     
     //Are there any recorded cheeps?
     if (!cheeps.Any())
     {
-        Console.WriteLine("No cheeps yet");
+        UserInterface.NoCheeps();
         return;
     }
 
-    foreach (var c in cheeps)
-    {
-        UserInterface.WriteOutCheep(c);
+   	foreach (var cheep in cheeps)
+	{
+        UserInterface.WriteOutCheep(cheep);
     }
 }
 
-void cheep(string cheeping)
+void cheep(string message)
 {
-    string name = Environment.UserName;
-    long time = DateTimeOffset.Now.ToUnixTimeSeconds();
+	UserInterface.PostingCheep(message); 
     
     //Create and store new cheep using SimpeDB
-    var newCheep = new Cheep(name, cheeping, time);
+    var newCheep = new Cheep(
+		Environment.UserName, 
+		message, 
+		DateTimeOffset.Now.ToUnixTimeSeconds()
+	);
+
     dbRepository.Store(newCheep);
 }
-
-/*
-string[] files = new string[10];
-try
-{
-    files = File.ReadAllLines(@"chirp_cli_db.csv");
-}
-catch (Exception e)
-{
-    Console.WriteLine(e.Message);
-}
-
-if (args[0] == "read")
-{
-    read();
-} else if (args[0] == "cheep")
-{
-    cheep(args[1]);
-    Cheep hey = new Cheep();
-}
-void read()
-{ 
-    var cheeps = Parser.ComposeCheep(args);
-    foreach (var c in cheeps)
-    {
-       UserInterface.WriteOutCheep(c);
-    }
-}
-
-void cheep(string cheeping)
-{
-    StringBuilder s = new StringBuilder();
-    string name = Environment.UserName;
-    String tidDato = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ";
-    s.Append(name + " @ " + tidDato + cheeping);
-    String newCheep =  s.ToString();
-    Console.WriteLine(newCheep);
-    StreamWriter sw = new StreamWriter(@"chirp_cli_db.csv",true);
-    s.Clear();
-
-    long time = DateTimeOffset.Now.ToUnixTimeSeconds();
-    s.Append(name + "," + '"' + cheeping + '"' + "," +time);
-    sw.WriteLine(s.ToString());
-    sw.Close();
-}*/

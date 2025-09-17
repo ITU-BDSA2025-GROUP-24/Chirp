@@ -7,6 +7,7 @@ namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
+CSVdatabase-refactor-to-singleton
 	private string filePath = "../Chirp/data/chirp_cli_db.csv";
 	
 	private static CsvDatabase<T> instance = null;
@@ -42,6 +43,15 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 
 		   //Checking path for .csv
 /*
+=======
+	private string filePath; 
+	
+	public CsvDatabase(string? customFilePath = null)
+	{
+		this.filePath = "chirp_cli_db.csv";
+		
+		   //Checking path for .csv
+		 main
 		 Console.WriteLine($"Current working directory: {Directory.GetCurrentDirectory()}");
 		Console.WriteLine($"Looking for file at relative path: {filePath}");
 		Console.WriteLine($"Full resolved path: {Path.GetFullPath(filePath)}");
