@@ -27,13 +27,10 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
         };
     }
 
-
-	private string filePath = "../Chirp/data/chirp_cli_db.csv";
 	
 	private static CsvDatabase<T> instance = null;
 	private static readonly object padlock = new object();
 	
-
 	public CsvDatabase()
 	{
 	}
@@ -55,35 +52,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 	}
 
 
-	/*//Pre-singleton deisgn:
-	public  CsvDatabase()
-	{
-		string filePath = "../Chirp/data/chirp_cli_db.csv";
-		this.filePath = filePath;
-
-		   //Checking path for .csv
-/*
-
-	private string filePath; 
 	
-	public CsvDatabase(string? customFilePath = null)
-	{
-		this.filePath = "chirp_cli_db.csv";
-
-		
-		   //Checking path for .csv
-		 main
-		 Console.WriteLine($"Current working directory: {Directory.GetCurrentDirectory()}");
-		Console.WriteLine($"Looking for file at relative path: {filePath}");
-		Console.WriteLine($"Full resolved path: {Path.GetFullPath(filePath)}");
-		Console.WriteLine($"File exists at that path: {File.Exists(filePath)}");
-		Console.WriteLine();
-
-
-
-
-	}
-*/
 
 	public IEnumerable<T> Read(int? limit = null)
 	{
