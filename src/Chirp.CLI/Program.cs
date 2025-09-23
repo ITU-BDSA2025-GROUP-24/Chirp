@@ -1,9 +1,7 @@
-﻿
 using Chirp.CLI;
-using SimpleDB;
 using DocoptNet;
-
-IDatabaseRepository<Cheep> dbRepository = new CsvDatabase<Cheep>();
+using System.Net.Http.Headers;
+using System.Linq;
 
 const string Usage = @"Chirp.
 
@@ -15,56 +13,59 @@ Usage:
 
 try
 {
-    var argsDict = new Docopt().Apply(Usage, args, exit: true);
+    var arguments = new Docopt().Apply(Usage, args, version: "Chirp 2.0 (Web)", exit: true);
 
-    if (argsDict["read"].IsTrue)
+    var baseUrl = Config.BaseUrl;
+    using var http = new HttpClient { BaseAddress = new Uri(baseUrl) };
+    http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    var api = new ChirpApi(http);
+
+    if (arguments["read"].IsTrue)
     {
-        //Reads and prints cheeps from database
-        read(); 
-        
+        var cheeps = await api.GetAllAsync();
+        if (cheeps.Count == 0)
+        {
+            UserInterface.NoCheeps();
+        }
+        else
+        {
+            foreach (var c in cheeps)
+                UserInterface.WriteOutCheep(c);
+        }
     }
-    else if (argsDict["cheep"].IsTrue)
+    else if (arguments["cheep"].IsTrue)
     {
-		//Adds cheep to database
-        var message = string.Join(" ", argsDict["<message>"].AsList.Cast<string>());
-        cheep(message);
+        var list = arguments["<message>"].AsList;          // returns ArrayList (non-generic)
+        var message = string.Join(" ",                     // Cast to IEnumerable<object> then ToString
+            list.Cast<object>().Select(o => o.ToString()));
+
+        var Author = Environment.UserName;
+        var Message = message;
+        var Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        var cheepa = new Cheep(Author, Message, Timestamp);
+
+        var ok = await api.PostAsync(cheepa);
+        Console.WriteLine(ok ? "Posted." : "Failed.");
+        return;
     }
 }
 catch (DocoptInputErrorException e)
 {
-    Console.Error.WriteLine(e.Message);
-    Console.Error.WriteLine(Usage);
-    Environment.Exit(1);
+    Console.WriteLine(e.Message);
+    Console.WriteLine(Usage);
 }
 
-void read()
+void cheep(string message, ChirpApi api)
 {
-	UserInterface.ReadingCheeps();
-    var cheeps = dbRepository.Read();
-    
-    //Are there any recorded cheeps?
-    if (!cheeps.Any())
-    {
-        UserInterface.NoCheeps();
-        return;
-    }
+    UserInterface.PostingCheep(message);
 
-   	foreach (var cheep in cheeps)
-	{
-        UserInterface.WriteOutCheep(cheep);
-    }
-}
-
-void cheep(string message)
-{
-	UserInterface.PostingCheep(message); 
-    
-    //Create and store new cheep using SimpeDB
     var newCheep = new Cheep(
-		Environment.UserName, 
-		message, 
-		DateTimeOffset.Now.ToUnixTimeSeconds()
-	);
+        Environment.UserName,
+        message,
+        DateTimeOffset.Now.ToUnixTimeSeconds()
+    );
 
-    dbRepository.Store(newCheep);
+    var ok = api.PostAsync(newCheep).GetAwaiter().GetResult();
+    Console.WriteLine(ok ? "Posted." : "Failed.");
 }

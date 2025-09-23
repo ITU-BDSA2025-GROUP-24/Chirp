@@ -1,98 +1,81 @@
-
-using System.Globalization; 
-using CsvHelper; 
-
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
+    private readonly string _filePath;
+    private readonly CsvConfiguration _cfg;      // <— _cfg lives here
+    private readonly SemaphoreSlim _gate = new(1, 1);
 
-	private string filePath = "../Chirp/data/chirp_cli_db.csv";
-	
-	private static CsvDatabase<T> instance = null;
-	private static readonly object padlock = new object();
-	
+    public CsvDatabase(string filePath)
+    {
+        _filePath = filePath;
 
-	public CsvDatabase()
-	{
-	}
-	
-	
-	public static CsvDatabase<T> Instance
-	{
-		get
-		{
-			lock (padlock)
-			{
-				if (instance == null)
-				{
-					instance = new CsvDatabase<T>();
-				}
-				return instance;
-			}
-		}
-	}
+        // Initialize _cfg in the constructor
+        _cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+            TrimOptions = TrimOptions.Trim,
+            DetectDelimiter = true,
 
+            // Be forgiving if the file was created without headers, etc.
+            HeaderValidated = null,
+            MissingFieldFound = null
+        };
 
-	/*//Pre-singleton deisgn:
-	public  CsvDatabase()
-	{
-		string filePath = "../Chirp/data/chirp_cli_db.csv";
-		this.filePath = filePath;
+        // Optional: create directory if missing (don’t write a file yet)
+        var dir = Path.GetDirectoryName(_filePath);
+        if (!string.IsNullOrWhiteSpace(dir) && !Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+    }
 
-		   //Checking path for .csv
-/*
+    // Synchronous API to match your existing code/tests
+    public IEnumerable<T> Read(int? limit = null)
+    {
+        _gate.Wait();
+        try
+        {
+            // If file doesn't exist yet, return empty list
+            if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
+                return new List<T>();
 
-	private string filePath; 
-	
-	public CsvDatabase(string? customFilePath = null)
-	{
-		this.filePath = "chirp_cli_db.csv";
-		
-		   //Checking path for .csv
-		 main
-		 Console.WriteLine($"Current working directory: {Directory.GetCurrentDirectory()}");
-		Console.WriteLine($"Looking for file at relative path: {filePath}");
-		Console.WriteLine($"Full resolved path: {Path.GetFullPath(filePath)}");
-		Console.WriteLine($"File exists at that path: {File.Exists(filePath)}");
-		Console.WriteLine();
+            using var reader = new StreamReader(_filePath);
+            using var csv = new CsvReader(reader, _cfg);
 
-	}
-*/
-	public IEnumerable<T> Read(int? limit = null)
-	{
-		//If .csv does not exist then return empty collection to avoid crashing
-		if (!File.Exists(filePath))
-		{
-			return Enumerable.Empty<T>();
-		}
-		
-		List<T>? rec;
-	    using (var reader = new StreamReader(filePath))
-		using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) //From https://joshclose.github.io/CsvHelper/
-		{
-			rec = csv.GetRecords<T>().ToList();
-		}
-	    
-	    //Return specific amount of Cheeps if the limit is lower than the amount of registered Cheeps
-		if (limit != null && limit < rec.Count)
-		{
-			int n = limit.GetValueOrDefault();
-			return rec.GetRange(rec.Count - n, n); //Return the last N records
-		}
+            var records = csv.GetRecords<T>();
+            return limit.HasValue ? records.Take(limit.Value).ToList() : records.ToList();
+        }
+        finally { _gate.Release(); }
+    }
 
-		return rec;
-	}
+    public void Store(T item)
+    {
+        _gate.Wait();
+        try
+        {
+            var isEmpty = !File.Exists(_filePath) || new FileInfo(_filePath).Length == 0;
 
-	public void Store(T record)
-	{
-		//Append - Add the new cheep to the end of file
-		using (var writer = new StreamWriter(filePath, true))	
-		using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) //From https://joshclose.github.io/CsvHelper/
-		{
-			csv.WriteRecord(record); //writes to csv
-			csv.NextRecord();
-		}
-	}
+            using var stream = new FileStream(_filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            using var writer = new StreamWriter(stream);
+            using var csv = new CsvWriter(writer, _cfg);
+
+            // Ensure header row exists before first record
+            if (isEmpty)
+            {
+                csv.WriteHeader<T>();
+                csv.NextRecord();
+            }
+
+            csv.WriteRecord(item);
+            csv.NextRecord();
+        }
+        finally { _gate.Release(); }
+    }
 }
