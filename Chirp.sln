@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.E2ETests", "test\Chir
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{42F086BC-D598-4D22-9431-AFB0BCC89A8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsDB", "test\UnitTestsDBnitTestsDB.csproj", "{4247A731-1894-49E3-8F14-9DDF23A4A36D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsDB", "test\UnitTestsDB\UnitTestsDB.csproj", "{4247A731-1894-49E3-8F14-9DDF23A4A36D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
