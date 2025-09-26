@@ -1,9 +1,7 @@
-
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -17,20 +15,22 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
     private readonly CsvConfiguration _cfg;  
     private readonly SemaphoreSlim _gate = new(1, 1);
 
-    public CsvDatabase(string filePath = "./data/chirp_cli_db.csv")
+    public CsvDatabase(string filePath = "./data/chirp_cli_db.csv", bool hasHeader = true)
     {
-        _filePath = filePath;
+        this._filePath = filePath ?? "data/chirp_cli_db.csv";
 
         _cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            HasHeaderRecord = true,
+            HasHeaderRecord = hasHeader,
+            HeaderValidated = null,
+            MissingFieldFound = null,
+            BadDataFound = null,
             TrimOptions = TrimOptions.Trim,
             DetectDelimiter = true,
         };
     }
 	
-
-
+    
 
     public static CsvDatabase<T> getInstance()
     {
@@ -45,19 +45,26 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
     
     public IEnumerable<T> Read(int? limit = null)
     {
+        
         Console.Write("Searching for " + _filePath);
         _gate.Wait();
         try
         {
             if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
                 return Enumerable.Empty<T>();
-                
+
             using var reader = new StreamReader(_filePath);
             using var csv = new CsvReader(reader, _cfg);
 
+            if (_cfg.HasHeaderRecord)
+            {
+                csv.Read();
+                csv.ReadHeader();
+            }
+
             var records = csv.GetRecords<T>();
             return limit.HasValue ? records.Take(limit.Value).ToList() : records.ToList();
-        }
+    }
         finally { _gate.Release(); }
 
     }
@@ -67,9 +74,17 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 
     public void Store(T item)
     {
+        var fileExists = File.Exists(_filePath);
+        
             using var stream = new FileStream(_filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
             using var writer = new StreamWriter(stream);
             using var csv = new CsvWriter(writer, _cfg);
+
+            if (!fileExists && _cfg.HasHeaderRecord)
+            {
+                csv.WriteHeader<T>();
+                csv.NextRecord();
+            }
 
             csv.WriteRecord(item);
             csv.NextRecord();
