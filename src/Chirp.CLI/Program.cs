@@ -1,70 +1,63 @@
-﻿
 using Chirp.CLI;
-using SimpleDB;
 using DocoptNet;
+using System.Net.Http.Headers;
+using System.Linq;
+using SimpleDB;
 
-IDatabaseRepository<Cheep> dbRepository = new CsvDatabase<Cheep>();
-
-const string Usage = @"Chirp.
+class Program
+{
+    static IDatabaseRepository<Cheep> dbRepository;
+    static void Main(string[] args)
+    {
+        const string Usage = @"Chirp.
 
 Usage:
   chirp read
   chirp cheep <message>...
   chirp (-h | --help)
 ";
-
-try
-{
-    var argsDict = new Docopt().Apply(Usage, args, exit: true);
-
-    if (argsDict["read"].IsTrue)
-    {
-        //Reads and prints cheeps from database
-        read(); 
         
+        dbRepository = CsvDatabase<Cheep>.getInstance();
+        try
+        {
+            var arguments = new Docopt().Apply(Usage, args, version: "Chirp 2.0 (Web)", exit: true);
+
+            if (arguments["read"].IsTrue)
+            {
+                var cheeps = dbRepository.Read();
+                foreach (var c in cheeps)
+                {
+                    // your formatter
+                    UserInterface.WriteOutCheep(c);
+
+                    // or a quick line:
+                    // Console.WriteLine($"{c.Timestamp} @{c.Author}: {c.Message}");
+                }
+            }
+            else if (arguments["cheep"].IsTrue)
+            {
+                var list = arguments["<message>"].AsList;
+                var message = string.Join(" ", list.Cast<object>().Select(o => o.ToString()));
+                dbRepository.Store(cheep(message));
+            }
+        }
+        catch (DocoptInputErrorException e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(Usage);
+        }
     }
-    else if (argsDict["cheep"].IsTrue)
+
+
+    static Cheep cheep(string message)
     {
-		//Adds cheep to database
-        var message = string.Join(" ", argsDict["<message>"].AsList.Cast<string>());
-        cheep(message);
+        UserInterface.PostingCheep(message);
+
+        var newCheep = new Cheep(
+            Environment.UserName,
+            message,
+            DateTimeOffset.Now.ToUnixTimeSeconds()
+        );
+        return newCheep;
     }
-}
-catch (DocoptInputErrorException e)
-{
-    Console.Error.WriteLine(e.Message);
-    Console.Error.WriteLine(Usage);
-    Environment.Exit(1);
-}
-
-void read()
-{
-	UserInterface.ReadingCheeps();
-    var cheeps = dbRepository.Read();
-    
-    //Are there any recorded cheeps?
-    if (!cheeps.Any())
-    {
-        UserInterface.NoCheeps();
-        return;
-    }
-
-   	foreach (var cheep in cheeps)
-	{
-        UserInterface.WriteOutCheep(cheep);
-    }
-}
-
-void cheep(string message)
-{
-	UserInterface.PostingCheep(message); 
-    
-    //Create and store new cheep using SimpeDB
-    var newCheep = new Cheep(
-		Environment.UserName, 
-		message, 
-		DateTimeOffset.Now.ToUnixTimeSeconds()
-	);
-
-    dbRepository.Store(newCheep);
 }

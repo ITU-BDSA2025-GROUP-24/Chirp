@@ -1,8 +1,10 @@
-using System;
+
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
+using System.Threadin:
+using System:
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -10,95 +12,73 @@ namespace SimpleDB;
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
+    private static CsvDatabase<T>? instance;
+    private readonly string _filePath;
+    private readonly CsvConfiguration _cfg;  
+    private readonly SemaphoreSlim _gate = new(1, 1);
 
-    private readonly string filePath;
-    private readonly CsvConfiguration _config;
-
-    public CsvDatabase(string? customFilePath = null, bool hasHeader = true)
+    public CsvDatabase(string filePath = "./data/chirp_cli_db.csv")
     {
-        this.filePath = customFilePath ?? "chirp_cli_db.csv";
+        _filePath = filePath;
 
-        _config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        _cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            HasHeaderRecord = hasHeader,
-            HeaderValidated = null,
-            MissingFieldFound = null,
-            BadDataFound = null
+            HasHeaderRecord = true,
+            TrimOptions = TrimOptions.Trim,
+            DetectDelimiter = true,
         };
     }
-
-	
-	private static CsvDatabase<T> instance = null;
-	private static readonly object padlock = new object();
-	
-	public CsvDatabase()
-	{
-	}
-	
-	
-	public static CsvDatabase<T> Instance
-	{
-		get
-		{
-			lock (padlock)
-			{
-				if (instance == null)
-				{
-					instance = new CsvDatabase<T>();
-				}
-				return instance;
-			}
-		}
-	}
-
-
 	
 
-	public IEnumerable<T> Read(int? limit = null)
-	{
-		//If .csv does not exist then return empty collection to avoid crashing
-		if (!File.Exists(filePath))
-		{
-			return Enumerable.Empty<T>();
-		}
-		
-		List<T>? rec;
-	    using (var reader = new StreamReader(filePath))
-		using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) //From https://joshclose.github.io/CsvHelper/
-		{
-			if(_config.HasHeaderRecord && csv.Read())
-			{ 
-				csv.ReadHeader();
-			}
 
-			rec = csv.GetRecords<T>().ToList();
-		}
-	    
-	    //Return specific amount of Cheeps if the limit is lower than the amount of registered Cheeps
-		if (limit != null && limit < rec.Count)
-		{
-			int n = limit.GetValueOrDefault();
-			return rec.GetRange(rec.Count - n, n); //Return the last N records
-		}
 
-		return rec;
-	}
+    public static CsvDatabase<T> getInstance()
+    {
+      get 
+      {
+       lock (padlock)
+       {
+        if (instance == null)
+        {
+            instance = new CsvDatabase<T>();
+        }
+        return instance;
+      }
+     }
+    }
+    
+    
+    public IEnumerable<T> Read(int? limit = null)
+    {
+        Console.Write("Searching for " + _filePath);
+        _gate.Wait();
+        try
+        {
+            if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
+                return Enumerable.Empty<T>();
+                
+            using var reader = new StreamReader(_filePath);
+            using var csv = new CsvReader(reader, _cfg);
 
-	public void Store(T record)
-	{
-		var fileExists = File.Exists(filePath);
-		//Append - Add the new cheep to the end of file
-		using (var writer = new StreamWriter(filePath, true))	
-		using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) //From https://joshclose.github.io/CsvHelper/
-		{
-			if (!fileExists && _config.HasHeaderRecord)
-            {
-                csv.WriteHeader<T>();
-                csv.NextRecord();
-            }
-			
-			csv.WriteRecord(record); //writes to csv
-			csv.NextRecord();
-		}
-	}
+            var records = csv.GetRecords<T>();
+            return limit.HasValue ? records.Take(limit.Value).ToList() : records.ToList();
+        }
+        finally { _gate.Release(); }
+
+    }
+    
+    
+   
+
+    public void Store(T item)
+    {
+            using var stream = new FileStream(_filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            using var writer = new StreamWriter(stream);
+            using var csv = new CsvWriter(writer, _cfg);
+
+            csv.WriteRecord(item);
+            csv.NextRecord();
+       
+    }    
 }
+	
