@@ -1,8 +1,10 @@
+
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threadin:
+using System:
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -26,15 +28,26 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
             DetectDelimiter = true,
         };
     }
+	
+
+
 
     public static CsvDatabase<T> getInstance()
     {
+      get 
+      {
+       lock (padlock)
+       {
         if (instance == null)
         {
             instance = new CsvDatabase<T>();
         }
         return instance;
+      }
+     }
     }
+    
+    
     public IEnumerable<T> Read(int? limit = null)
     {
         Console.Write("Searching for " + _filePath);
@@ -43,7 +56,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
         {
             if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
                 return Enumerable.Empty<T>();
-
+                
             using var reader = new StreamReader(_filePath);
             using var csv = new CsvReader(reader, _cfg);
 
@@ -51,15 +64,11 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
             return limit.HasValue ? records.Take(limit.Value).ToList() : records.ToList();
         }
         finally { _gate.Release(); }
-/*
-            using var reader = new StreamReader(_filePath);
-            using var csv = new CsvReader(reader, _cfg);
-            var records = csv.GetRecords<T>();
-            Console.WriteLine(records);
-        return records;
-        */
-        
+
     }
+    
+    
+   
 
     public void Store(T item)
     {
@@ -70,7 +79,6 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
             csv.WriteRecord(item);
             csv.NextRecord();
        
-    }
-    
-    
+    }    
 }
+	
