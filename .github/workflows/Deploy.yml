@@ -1,0 +1,19 @@
+name: Deploy to Azure WebApp
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '8.0.x' }   # or your targeted version
+      - name: Publish
+        run: dotnet publish src/Chirp.CSVDBService -c Release -o ./publish
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: bdsagroup24chirpremotedb
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish

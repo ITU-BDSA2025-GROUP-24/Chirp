@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threadin:
-using System:
+using System.Threading;
+using System;
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -34,17 +34,12 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 
     public static CsvDatabase<T> getInstance()
     {
-      get 
-      {
-       lock (padlock)
-       {
+       
         if (instance == null)
         {
             instance = new CsvDatabase<T>();
         }
         return instance;
-      }
-     }
     }
     
     
