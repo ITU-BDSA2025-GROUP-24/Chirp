@@ -15,11 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "test\In
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0FD99402-2E64-4629-B6EC-85672C1B1619}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chirp.E2ETests", "test\chirp.e2etests\chirp.E2ETests.csproj", "{9B4BFBE1-1E49-4682-B8E1-7D56409EBF88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.E2ETests", "test\Chirp.E2ETests\Chirp.E2ETests.csproj", "{9B4BFBE1-1E49-4682-B8E1-7D56409EBF88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unittests", "test\unittests\unittests.csproj", "{42F086BC-D598-4D22-9431-AFB0BCC89A8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{42F086BC-D598-4D22-9431-AFB0BCC89A8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unittestsdb", "test\unittestsdb\unittestsdb.csproj", "{4247A731-1894-49E3-8F14-9DDF23A4A36D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsDB", "test\UnitTestsDBnitTestsDB.csproj", "{4247A731-1894-49E3-8F14-9DDF23A4A36D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
