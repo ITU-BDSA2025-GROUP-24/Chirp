@@ -24,7 +24,15 @@ Usage:
 
             if (arguments["read"].IsTrue)
             {
-                dbRepository.Read();
+                var cheeps = dbRepository.Read();
+                foreach (var c in cheeps)
+                {
+                    // your formatter
+                    UserInterface.WriteOutCheep(c);
+
+                    // or a quick line:
+                    // Console.WriteLine($"{c.Timestamp} @{c.Author}: {c.Message}");
+                }
             }
             else if (arguments["cheep"].IsTrue)
             {
