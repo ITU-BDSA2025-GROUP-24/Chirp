@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Chirp.CSVDBService;
 using SimpleDB;
 
 class Program
@@ -8,35 +9,41 @@ class Program
     static IDatabaseRepository<Cheep> dbRepository;
     public static void Main(string[] args)
     {
-        dbRepository = CsvDatabase<Cheep>.getInstance();
-
         var builder = WebApplication.CreateBuilder(args);
         var app = builder.Build();
 
-        app.MapPost("/cheep", (HttpRequest request) => StoreCheep(request));
+        // simple home page
+        app.MapGet("/", () => Results.Text("Chirp.CSVDBService is running", "text/plain"));
 
-        app.MapGet("/cheeps", (int cap) => GetCheeps(cap));
+        // GET /cheeps?cap=10  (cap is optional; defaults to 10)
+        app.MapGet("/cheeps", (int cap = 10) =>
+        {
+            var records = GetCheeps(cap);
+            return Results.Json(records);
+        });
+
+        // POST /cheep  with JSON body { "author": "...", "message": "...", "timestamp": 1234567890 }
+        // Minimal API binds the JSON body to Cheep automatically
+        app.MapPost("/cheep", (Cheep newCheep) =>
+        {
+            StoreCheep(newCheep);
+            return Results.Created($"/cheep/{newCheep.Timestamp}", newCheep);
+        });
 
         app.Run();
     }
+
     private static string GetCheeps(int cap = 10)
     {
         IEnumerable<Cheep> records = dbRepository.Read(cap);
         return JsonSerializer.Serialize(records);
     }
 
-    private static async void StoreCheep(HttpRequest request)
+    private static IResult StoreCheep(Cheep newCheep)
     {
-        var body = new StreamReader(request.Body);
-        string jsonObject = await body.ReadToEndAsync();
-        Console.WriteLine(jsonObject);
-        Cheep newCheep = JsonSerializer.Deserialize<Cheep>(jsonObject);
-        Console.WriteLine(newCheep.Author);
-        Console.WriteLine(newCheep.Timestamp);
-        Console.WriteLine(newCheep.Message);
         dbRepository.Store(newCheep);
+        return Results.Created($"/cheep/{newCheep.Timestamp}", newCheep);
     }
-
 }
 /*using Microsoft.AspNetCore.Http.Json;
 using SimpleDB;

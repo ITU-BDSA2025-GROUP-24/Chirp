@@ -34,7 +34,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 
     public static CsvDatabase<T> getInstance()
     {
-       
+
         if (instance == null)
         {
             instance = new CsvDatabase<T>();

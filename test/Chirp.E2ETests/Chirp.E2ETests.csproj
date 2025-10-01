@@ -20,9 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Chirp.CLI\Chirp.CLI.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Chirp.CLI\Cheep.cs" />
-  </ItemGroup>
 
 
 </Project>

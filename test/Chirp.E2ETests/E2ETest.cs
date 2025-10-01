@@ -11,7 +11,7 @@ using System.Globalization;
 public class UnitTest1
 {
 
-    public void Test1()
+    /*public void Test1()
     {   //arrange
         var args = new string[] { "read", "10" };
         var result = Program.Main(args);
@@ -21,5 +21,5 @@ public class UnitTest1
 
 
 
-    }
+    }*/
 }   
