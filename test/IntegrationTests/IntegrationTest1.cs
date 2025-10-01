@@ -9,7 +9,7 @@ using System.Globalization;
 
 
 public class IntegrationTest
-{
+{ 
     [Fact]
     public void CheepStorageAndRetrieval() {
         
