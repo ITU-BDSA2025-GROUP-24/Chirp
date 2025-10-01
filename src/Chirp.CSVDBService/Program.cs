@@ -39,16 +39,10 @@ class Program
         return JsonSerializer.Serialize(records);
     }
 
-    private static async void StoreCheep(HttpRequest request)
+    private static IResult StoreCheep(Cheep newCheep)
     {
-        var body = new StreamReader(request.Body);
-        string jsonObject = await body.ReadToEndAsync();
-        Console.WriteLine(jsonObject);
-        Cheep newCheep = JsonSerializer.Deserialize<Cheep>(jsonObject);
-        Console.WriteLine(newCheep.Author);
-        Console.WriteLine(newCheep.Timestamp);
-        Console.WriteLine(newCheep.Message);
         dbRepository.Store(newCheep);
+        return Results.Created($"/cheep/{newCheep.Timestamp}", newCheep);
     }
 }
 /*using Microsoft.AspNetCore.Http.Json;
