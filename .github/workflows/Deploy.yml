@@ -1,0 +1,27 @@
+name: Deploy to Azure Web App
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'   # or 8.0.x to match your app
+
+      - name: Publish .NET app
+        run: dotnet publish src/Chirp.CSVDBService -c Release -o ./publish
+
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: bdsagroup24chirpremotedb
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish      # folder is fine; action will zip it
