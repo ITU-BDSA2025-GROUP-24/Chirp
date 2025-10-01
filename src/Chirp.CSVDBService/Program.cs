@@ -10,24 +10,32 @@ class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        var app = builder.Build();
 
-        // simple home page
-        app.MapGet("/", () => Results.Text("Chirp.CSVDBService is running", "text/plain"));
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
-        // GET /cheeps?cap=10  (cap is optional; defaults to 10)
-        app.MapGet("/cheeps", (int cap = 10) =>
+// register your repo; point to your CSV path
+        builder.Services.AddSingleton<IDatabaseRepository<Cheep>>(sp =>
         {
-            var records = GetCheeps(cap);
-            return Results.Json(records);
+            // Replace 'CsvDatabase<Cheep>' with your actual implementation class if different
+            return new CsvDatabase<Cheep>();
         });
 
-        // POST /cheep  with JSON body { "author": "...", "message": "...", "timestamp": 1234567890 }
-        // Minimal API binds the JSON body to Cheep automatically
-        app.MapPost("/cheep", (Cheep newCheep) =>
+        var app = builder.Build();
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        app.MapGet("/cheeps", (IDatabaseRepository<Cheep> repo, int? limit) =>
         {
-            StoreCheep(newCheep);
-            return Results.Created($"/cheep/{newCheep.Timestamp}", newCheep);
+            var items = repo.Read(limit);
+            return Results.Ok(items);
+        });
+
+        app.MapPost("/cheep", (IDatabaseRepository<Cheep> repo, Cheep dto) =>
+        {
+            dbRepository.Store(dto);
+            return Results.Created($"/cheeps", dto);
         });
 
         app.Run();
