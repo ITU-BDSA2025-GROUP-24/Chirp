@@ -33,6 +33,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
         }
         return instance;
     }
+
     public IEnumerable<T> Read(int? limit = null)
     {
         if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
