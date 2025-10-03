@@ -11,17 +11,46 @@ class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+// ---- Choose a persistent, writable path on Azure ----
+        var home = Environment.GetEnvironmentVariable("HOME");     // "/home" on Linux App Service
+        var contentRoot = builder.Environment.ContentRootPath;      // local dev fallback
+        var dataDir = string.IsNullOrEmpty(home)
+            ? Path.Combine(contentRoot, "data")
+            : Path.Combine(home, "data");                           // => /home/data (persists)
+        Directory.CreateDirectory(dataDir);
 
-// register your repo; point to your CSV path
-        builder.Services.AddSingleton<IDatabaseRepository<Cheep>>(sp =>
+        var dataPath = Path.Combine(dataDir, "chirp_cli_db.csv");
+        
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();   // <-- required
+
+// Optional: let Azure App Settings override this
+        var configuredPath = builder.Configuration["CHEEP_DB_PATH"];
+        if (!string.IsNullOrWhiteSpace(configuredPath))
         {
-            // Replace 'CsvDatabase<Cheep>' with your actual implementation class if different
-            return new CsvDatabase<Cheep>();
-        });
+            Directory.CreateDirectory(Path.GetDirectoryName(configuredPath)!);
+            dataPath = configuredPath;
+        }
+
+// ---- Register your repo with the explicit path ----
+        builder.Services.AddSingleton<IDatabaseRepository<Cheep>>(_ => new CsvDatabase<Cheep>(dataPath));
 
         var app = builder.Build();
+
+// ---- Debug endpoint to see exactly where the file is ----
+        app.MapGet("/_diag/path", () =>
+        {
+            return Results.Ok(new
+            {
+                HOME = home,
+                ContentRoot = contentRoot,
+                DataDir = dataDir,
+                DataPath = dataPath,
+                Exists = System.IO.File.Exists(dataPath),
+                Length = System.IO.File.Exists(dataPath) ? new FileInfo(dataPath).Length : 0
+            });
+        });
+
 
         app.UseSwagger();
         app.UseSwaggerUI();
@@ -32,10 +61,19 @@ class Program
             return Results.Ok(items);
         });
 
-        app.MapPost("/cheep", (IDatabaseRepository<Cheep> repo, Cheep dto) =>
+        app.MapPost("/cheep", (IDatabaseRepository<Cheep> repo, Cheep dto, ILogger<Program> log) =>
         {
-            dbRepository.Store(dto);
-            return Results.Created($"/cheeps", dto);
+            try
+            {
+                log.LogInformation("Storing cheep to {Path} | Author={Author}", dataPath, dto.Author);
+                repo.Store(dto);
+                return Results.Created("/cheeps", dto);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Failed writing cheep to {Path}", dataPath);
+                return Results.Problem("Failed to store cheep. Check logs for details.");
+            }
         });
 
         app.Run();
