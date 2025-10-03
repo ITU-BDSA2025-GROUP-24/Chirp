@@ -7,6 +7,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
     private readonly string _filePath;
     private readonly CsvConfiguration _cfg;
+    private static CsvDatabase<T>? instance;
 
     public CsvDatabase(string filePath = "./data/chirp_cli_db.csv")
     {
@@ -24,6 +25,14 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
         };
     }
 
+    public static CsvDatabase<T> getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new CsvDatabase<T>();
+        }
+        return instance;
+    }
     public IEnumerable<T> Read(int? limit = null)
     {
         if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
