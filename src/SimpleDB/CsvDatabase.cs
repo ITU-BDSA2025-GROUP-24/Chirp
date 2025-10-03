@@ -24,6 +24,17 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
         };
     }
 
+    public static CsvDatabase<T> getInstance()
+    {
+
+        if (instance == null)
+        {
+            instance = new CsvDatabase<T>();
+        }
+        return instance;
+    }
+    
+    
     public IEnumerable<T> Read(int? limit = null)
     {
         if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
