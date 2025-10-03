@@ -10,24 +10,70 @@ class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+// ---- Choose a persistent, writable path on Azure ----
+        var home = Environment.GetEnvironmentVariable("HOME");     // "/home" on Linux App Service
+        var contentRoot = builder.Environment.ContentRootPath;      // local dev fallback
+        var dataDir = string.IsNullOrEmpty(home)
+            ? Path.Combine(contentRoot, "data")
+            : Path.Combine(home, "data");                           // => /home/data (persists)
+        Directory.CreateDirectory(dataDir);
+
+        var dataPath = Path.Combine(dataDir, "chirp_cli_db.csv");
+        
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();   // <-- required
+
+// Optional: let Azure App Settings override this
+        var configuredPath = builder.Configuration["CHEEP_DB_PATH"];
+        if (!string.IsNullOrWhiteSpace(configuredPath))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(configuredPath)!);
+            dataPath = configuredPath;
+        }
+
+// ---- Register your repo with the explicit path ----
+        builder.Services.AddSingleton<IDatabaseRepository<Cheep>>(_ => new CsvDatabase<Cheep>(dataPath));
+
         var app = builder.Build();
 
-        // simple home page
-        app.MapGet("/", () => Results.Text("Chirp.CSVDBService is running", "text/plain"));
-
-        // GET /cheeps?cap=10  (cap is optional; defaults to 10)
-        app.MapGet("/cheeps", (int cap = 10) =>
+// ---- Debug endpoint to see exactly where the file is ----
+        app.MapGet("/_diag/path", () =>
         {
-            var records = GetCheeps(cap);
-            return Results.Json(records);
+            return Results.Ok(new
+            {
+                HOME = home,
+                ContentRoot = contentRoot,
+                DataDir = dataDir,
+                DataPath = dataPath,
+                Exists = System.IO.File.Exists(dataPath),
+                Length = System.IO.File.Exists(dataPath) ? new FileInfo(dataPath).Length : 0
+            });
         });
 
-        // POST /cheep  with JSON body { "author": "...", "message": "...", "timestamp": 1234567890 }
-        // Minimal API binds the JSON body to Cheep automatically
-        app.MapPost("/cheep", (Cheep newCheep) =>
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        app.MapGet("/cheeps", (IDatabaseRepository<Cheep> repo, int? limit) =>
         {
-            StoreCheep(newCheep);
-            return Results.Created($"/cheep/{newCheep.Timestamp}", newCheep);
+            var items = repo.Read(limit);
+            return Results.Ok(items);
+        });
+
+        app.MapPost("/cheep", (IDatabaseRepository<Cheep> repo, Cheep dto, ILogger<Program> log) =>
+        {
+            try
+            {
+                log.LogInformation("Storing cheep to {Path} | Author={Author}", dataPath, dto.Author);
+                repo.Store(dto);
+                return Results.Created("/cheeps", dto);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Failed writing cheep to {Path}", dataPath);
+                return Results.Problem("Failed to store cheep. Check logs for details.");
+            }
         });
 
         app.Run();
