@@ -32,9 +32,6 @@ jobs:
           
             dotnet build src/Chirp.CSVDBService/ --configuration Release
             
-            dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net9.0 --os win -c Release -o "App-$tag-windows"
-            dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net9.0 --os linux -c Release -o "App-$tag-linux"
-            dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net9.0 --os osx -c Release -o "App-$tag-macos"
             dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net8.0 --os win -c Release -o "App-$tag-windows"
             dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net8.0 --os linux -c Release -o "App-$tag-linux"
             dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net8.0 --os osx -c Release -o "App-$tag-macos"
