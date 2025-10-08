@@ -27,15 +27,14 @@ jobs:
           
       - name: Build with dotnet
         shell: bash
-        run: dotnet build src/Chirp.CSVDBService/ --configuration Release
+        run: |
             tag=$(git describe --tags --abbrev=0)
+          
+            dotnet build src/Chirp.CSVDBService/ --configuration Release
             
-            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net9.0 --os win -c Release -o "App-$tag-windows"
-            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net9.0 --os linux -c Release -o "App-$tag-linux"
-            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net9.0 --os osx -c Release -o "App-$tag-macos"
-            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net8.0 --os win -c Release -o "App-$tag-windows"
-            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net8.0 --os linux -c Release -o "App-$tag-linux"
-            dotnet publish src/Chirp.CLI/Chirp.CLI.csproj --framework net8.0 --os osx -c Release -o "App-$tag-macos"
+            dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net8.0 --os win -c Release -o "App-$tag-windows"
+            dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net8.0 --os linux -c Release -o "App-$tag-linux"
+            dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj --framework net8.0 --os osx -c Release -o "App-$tag-macos"
             
             7z a -tzip "App-$tag-windows.zip" "App-$tag-windows/*"
             7z a -tzip "App-$tag-linux.zip" "App-$tag-linux/*"
@@ -46,8 +45,8 @@ jobs:
             rm -r "App-$tag-macos"
           
       - name: dotnet publish
-          uses: softprops/action-gh-release@v2
-          with:
-            files: "App*"
-          env:
-            GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "App*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
