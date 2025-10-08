@@ -1,6 +1,6 @@
 ﻿namespace MyChat.Razor;
 
-public class MessageDTO
+public class CheepDTO
 {
     
 }

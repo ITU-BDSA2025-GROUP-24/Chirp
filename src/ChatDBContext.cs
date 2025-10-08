@@ -4,8 +4,8 @@ namespace MyChat.Razor;
 
 public class ChatDBContext : DbContext
 {
-    public DbSet<Message> Messages { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<Cheep> Cheep { get; set; }
+    public DbSet<Author> Author { get; set; }
     
     public ChatDBContext(DbContextOptions<ChatDBContext> options) : base(options){}
 }
