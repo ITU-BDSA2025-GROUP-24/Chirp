@@ -9,12 +9,12 @@ builder.Services.AddSingleton<IChatService, ChatService>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IChatService, ChatService>();
-builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 
 
 // Load database connection via configuration
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ChatDBContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
 
 var app = builder.Build();
 
