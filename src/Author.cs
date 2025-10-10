@@ -1,4 +1,5 @@
-﻿namespace MyChat.Razor;
+﻿
+namespace MyChat.Razor;
 
 public class Author
 {
