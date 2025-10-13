@@ -4,7 +4,7 @@ using Chirp.Infrastructure;
     
 #nullable disable
 
-namespace MyChat.Razor.Migrations
+namespace Chirp.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class LimitAuthorInfoStringLength : Migration

@@ -7,7 +7,7 @@ using Chirp.Infrastructure;
 
 #nullable disable
 
-namespace MyChat.Razor.Migrations
+namespace Chirp.Infrastructure.Migrations
 {
     [DbContext(typeof(ChirpDBContext))]
     partial class ChirpDBContextModelSnapshot : ModelSnapshot
