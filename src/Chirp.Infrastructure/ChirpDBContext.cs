@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Chirp.Infrastructure
+namespace Chirp.Infrastructure;
 
 public class ChirpDBContext : DbContext
 {
