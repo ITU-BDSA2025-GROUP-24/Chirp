@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Chirp.Infrastructure;
-using Chirp.Core; 
+using MyChat.Razor;
 
 var builder = WebApplication.CreateBuilder(args);
 
