@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyChat.Razor;
+namespace Chirp.Core;
 
 public class CheepDTO
 {
