@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Chirp.Infrastructure;
+namespace MyChat.Razor;
 
 public class ChirpDBContext : DbContext
 {
