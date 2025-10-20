@@ -1,5 +1,5 @@
 ﻿
-namespace MyChat.Razor;
+namespace Chirp.Infrastructure;
 
 public class Author
 {
