@@ -37,7 +37,12 @@ public class CheepRepository : ICheepRepository
         {
             var result = new CheepDTO
             {
-                Author = cheep.Author.Name,
+                Author = new AuthorDTO()
+                {
+                    AuthorId = cheep.Author.AuthorId,
+                    Name = cheep.Author.Name,
+                    Email = cheep.Author.Email,
+                },
                 Cheep = cheep.Text,
                 Timestamp = cheep.TimeStamp
             };
@@ -50,12 +55,12 @@ public class CheepRepository : ICheepRepository
     public async Task<int> CreateCheep(CheepDTO cheep)
     {
         //Does the author exist? No? Create one
-        var author = await _dbContext.Authors
-            .FirstOrDefaultAsync(a => a.Name == cheep.Author);
+        var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
     
         if (author == null)
         {
-            author = new Author { Name = cheep.Author };
+            author = new Author { Name = cheep.Author.Name };
+            
             _dbContext.Authors.Add(author);
         }
         
