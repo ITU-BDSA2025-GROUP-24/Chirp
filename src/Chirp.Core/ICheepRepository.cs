@@ -1,4 +1,4 @@
-﻿namespace MyChat.Razor;
+﻿namespace Chirp.Core;
 
 public interface ICheepRepository
 {

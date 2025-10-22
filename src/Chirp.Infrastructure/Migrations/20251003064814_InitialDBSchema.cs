@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Chirp.Infrastructure;
 
 #nullable disable
 
-namespace MyChat.Razor.Migrations
+namespace Chirp.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialDBSchema : Migration
@@ -11,7 +12,7 @@ namespace MyChat.Razor.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "Authors",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -20,11 +21,11 @@ namespace MyChat.Razor.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_Authors", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
+                name: "Cheeps",
                 columns: table => new
                 {
                     MessageId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -34,18 +35,18 @@ namespace MyChat.Razor.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => x.MessageId);
+                    table.PrimaryKey("PK_Cheeps", x => x.MessageId);
                     table.ForeignKey(
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "Authors",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_UserId",
-                table: "Messages",
+                table: "Cheeps",
                 column: "UserId");
         }
 
@@ -53,10 +54,10 @@ namespace MyChat.Razor.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "Cheeps");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Authors");
         }
     }
 }

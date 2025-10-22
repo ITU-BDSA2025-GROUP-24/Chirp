@@ -1,5 +1,6 @@
 ﻿using System;
-using MyChat.Razor;
+
+namespace Chirp.Infrastructure; 
 
 public static class DbInitializer
 {
