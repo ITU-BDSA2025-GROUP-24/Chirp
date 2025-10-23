@@ -1,19 +1,14 @@
-﻿@page
+﻿@page "/AddCheep"
 @model Chirp.Web.Pages.AddCheep
 
-@{
-    Layout = null;
-}
-
 <!DOCTYPE html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
 <div>
-    
+    <form method="post">
+        <p>Whats on your mind? <br />
+            <input type="hidden" value="addCheep" asp-for="method" id="method" name="method" />
+            <input type="text" size="80%" maxlength="160" asp-for="CheepText" id="CheepText" name="CheepText" />
+            <input type="submit" value="Cheep" />
+        </p>
+        @Html.AntiForgeryToken()
+    </form>
 </div>
-</body>
-</html>
