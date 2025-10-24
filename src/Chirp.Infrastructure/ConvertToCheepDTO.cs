@@ -11,7 +11,7 @@ public static class ConvertToCheepDTO
             CheepId = cheep.CheepId,
             Author = ConvertToAuthorDTO.ToAuthorDTO(cheep.Author),
             Cheep = cheep.Text,
-            Timestamp = cheep.Timestamp
+            TimeStamp = cheep.TimeStamp
         };
         return cheepDTO;
     }

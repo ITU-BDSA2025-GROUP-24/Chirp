@@ -42,7 +42,7 @@
                 { 
                     Author = Author,
                     Cheep = Cheep,
-                    Timestamp = DateTime.Now
+                    TimeStamp = DateTime.Now
                 };
     
                 await _repository.CreateCheep(cheepDto);

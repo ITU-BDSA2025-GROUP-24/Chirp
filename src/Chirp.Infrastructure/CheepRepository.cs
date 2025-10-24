@@ -44,7 +44,7 @@ public class CheepRepository : ICheepRepository
                     Email = cheep.Author.Email,
                 },
                 Cheep = cheep.Text,
-                Timestamp = cheep.TimeStamp
+                TimeStamp = cheep.TimeStamp
             };
             
             results.Add(result); 
@@ -76,7 +76,7 @@ public class CheepRepository : ICheepRepository
             Author = author,
             AuthorId = author.AuthorId,
             Text = cheep.Cheep, 
-            TimeStamp = cheep.Timestamp
+            TimeStamp = cheep.TimeStamp
         };
     
         var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
@@ -96,7 +96,7 @@ public class CheepRepository : ICheepRepository
         }
     
         existingCheep.Text = alteredCheep.Cheep;
-        existingCheep.TimeStamp = alteredCheep.Timestamp;
+        existingCheep.TimeStamp = alteredCheep.TimeStamp;
 
         await _dbContext.SaveChangesAsync();
     }
