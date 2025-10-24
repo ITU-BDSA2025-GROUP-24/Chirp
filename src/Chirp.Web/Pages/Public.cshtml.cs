@@ -1,21 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Chirp.Core;
 
-namespace MyChat.Razor.Pages;
+namespace Chirp.Web.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly IChatService _service;
-    public List<CheepViewModel> Cheeps { get; set; }
+    private readonly ICheepRepository _repository;
+    public required IEnumerable<CheepDTO> Cheeps { get; set; }
+    public AddCheepModel AddCheepModel{ get; set; }
 
-    public PublicModel(IChatService service)
+    public PublicModel(ICheepRepository repository)
     {
-        _service = service;
+        _repository = repository;
+        AddCheepModel = new AddCheepModel(repository);
     }
 
-    public ActionResult OnGet()
+ public async Task<ActionResult> OnGet()
     {
-        Cheeps = _service.GetCheeps();
+        Cheeps = await _repository.ReadCheep();
         return Page();
+        
+    }
+
+    [BindProperty]
+    public string Cheep { get; set; }
+    public async Task OnPostAsync()
+    {
+        await AddCheepModel.OnPostAsync();
     }
 }

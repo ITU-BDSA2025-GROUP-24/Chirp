@@ -1,14 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Chirp.Infrastructure;
-
 
 #nullable disable
 
 namespace Chirp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class LimitAuthorInfoStringLength : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +18,7 @@ namespace Chirp.Infrastructure.Migrations
                     AuthorId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false)
+                    Email = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

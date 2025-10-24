@@ -44,7 +44,7 @@ public class CheepRepository : ICheepRepository
                     Email = cheep.Author.Email,
                 },
                 Cheep = cheep.Text,
-                Timestamp = cheep.TimeStamp
+                TimeStamp = cheep.TimeStamp
             };
             
             results.Add(result); 
@@ -54,23 +54,29 @@ public class CheepRepository : ICheepRepository
     
     public async Task<int> CreateCheep(CheepDTO cheep)
     {
+        if (string.IsNullOrWhiteSpace(cheep.Author.Name))
+        {
+            throw new ArgumentException("Author name cannot be null or empty");
+        }
+        
         //Does the author exist? No? Create one
         var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
     
         if (author == null)
         {
-            author = new Author { Name = cheep.Author.Name };
+            author = new Author { Name = cheep.Author.Name, Email = $"{cheep.Author.Name}@chirp.com" };
             
             _dbContext.Authors.Add(author);
+            await _dbContext.SaveChangesAsync();
         }
         
         //Create new cheep
-        Cheep newCheep = new() 
+        Cheep newCheep = new Cheep() 
         { 
             Author = author,
             AuthorId = author.AuthorId,
             Text = cheep.Cheep, 
-            TimeStamp = cheep.Timestamp
+            TimeStamp = cheep.TimeStamp
         };
     
         var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
@@ -90,7 +96,7 @@ public class CheepRepository : ICheepRepository
         }
     
         existingCheep.Text = alteredCheep.Cheep;
-        existingCheep.TimeStamp = alteredCheep.Timestamp;
+        existingCheep.TimeStamp = alteredCheep.TimeStamp;
 
         await _dbContext.SaveChangesAsync();
     }

@@ -6,11 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<IChatService, ChatService>();
-
-builder.Services.AddRazorPages();
-builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 
 // Load database connection via configuration

@@ -1,5 +1,5 @@
 ﻿@page "/"
-@model MyChat.Razor.Pages.PublicModel
+@model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
@@ -16,10 +16,10 @@
                 <li>
                     <p>
                         <strong>
-                            <a href="/@cheep.Author">@cheep.Author</a>
+                            <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
-                        @cheep.Message
-                        <small>&mdash; @cheep.Timestamp</small>
+                        @cheep.Cheep
+                        <small>&mdash; @cheep.TimeStamp</small>
                     </p>
                 </li>
             }
