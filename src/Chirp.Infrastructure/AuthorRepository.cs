@@ -74,9 +74,7 @@ public class AuthorRepository : IAuthorRepository
             throw new UserNotFound($"The user {name} does not exist.");
         }
 
-        var authorInfo = new AuthorInfo(User: author.Name, 
-                                        Email: author.Email
-                                        );
+        var authorInfo = new AuthorInfo(User: author.Name, Email: author.Email);
         
         return authorInfo;
     }

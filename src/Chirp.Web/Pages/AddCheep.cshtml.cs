@@ -1,30 +1,54 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Chirp.Infrastructure;
-using Chirp.Core; 
+﻿   
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Chirp.Core;
 
-
-namespace Chirp.Web.Pages
-{
-    public class AddCheepModel : PageModel
+    namespace Chirp.Web.Pages
     {
-        private readonly ICheepRepository _repository;
-
-        public AddCheepModel(ICheepRepository repository)
+        public class AddCheepModel : PageModel
         {
-            _repository = repository;
-        }
+            private readonly ICheepRepository _repository;
 
-        public async Task OnPostAsync(String Author, String Cheep)
-        {
-            var cheepDto = new CheepDTO 
-            { 
-                Author = Author, 
-                Cheep = Cheep,  // or Message, depending on your DTO property name
-                Timestamp = DateTime.Now
-            };
+            [BindProperty]
+            public AuthorDTO Author { get; set; }
+
+            [BindProperty]
+            public string Cheep { get; set; }
+
+            public AddCheepModel(ICheepRepository repository)
+            {
+                _repository = repository;
+            }
+
+            // Handle GET request - set the author from query string
+            public void OnGet(string author)
+            {
+                Author = new AuthorDTO()
+                {
+                    Name = author
+                };
+            }
+
+            // Handle POST request
+            public async Task<IActionResult> OnPostAsync()
+            {
+                if (Author == null || string.IsNullOrWhiteSpace(Cheep))
+                {
+                    ModelState.AddModelError(string.Empty, "Author and Cheep are required");
+                    return Page();
+                }
+
+                var cheepDto = new CheepDTO 
+                { 
+                    Author = Author,
+                    Cheep = Cheep,
+                    Timestamp = DateTime.Now
+                };
     
-            await _repository.CreateCheep(cheepDto);
+                await _repository.CreateCheep(cheepDto);
+            
+                // Redirect back to the user's timeline
+                return RedirectToPage("/UserTimeline", new { author = Author });
+            }
         }
     }
-
-}
