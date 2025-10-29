@@ -46,9 +46,10 @@
                 };
     
                 await _repository.CreateCheep(cheepDto);
-            
+
+                string link = "/" + Author.Name;
                 // Redirect back to the user's timeline
-                return RedirectToPage("/UserTimeline", new { author = Author });
+                return Redirect(link);
             }
         }
     }

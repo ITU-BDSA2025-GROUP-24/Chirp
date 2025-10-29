@@ -8,16 +8,16 @@ namespace Chirp.Web.Pages;
 public class UserTimelineModel : PageModel
 {
     private readonly ICheepRepository _repository;
-    public List<CheepViewModel> Cheeps { get; set; }
+    public required IEnumerable<CheepDTO> Cheeps { get; set; }
 
     public UserTimelineModel(ICheepRepository repository)
     {
         _repository = repository;
     }
 
-    public async Task<ActionResult> OnGet( string author)
+    public async Task<ActionResult> OnGet(string author)
     {
-        Cheeps = await _repository.ReadCheep(author);
+        Cheeps = await _repository.ReadCheep(1,author);
         return Page();
     }
 }
