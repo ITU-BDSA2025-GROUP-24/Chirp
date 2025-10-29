@@ -27,10 +27,12 @@ public class CheepRepository : ICheepRepository
                 _dbContext.Cheeps.Where(c => c.Author.Name == author)
             )
             .OrderBy(c => c.TimeStamp)
+            .Reverse()
             .Skip(pageSize * pageLength)
             .Take(pageLength)
             .Include(c => c.Author)
             .ToListAsync();
+            
        
         var results = new List<CheepDTO>();
         foreach (Cheep cheep in cheeps)
@@ -54,14 +56,16 @@ public class CheepRepository : ICheepRepository
     
     public async Task<int> CreateCheep(CheepDTO cheep)
     {
-        if (string.IsNullOrWhiteSpace(cheep.Author.Name))
+        var author = new Author { Name = "Chris", Email = "@chirp.com" }; //await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
+
+        /*if (string.IsNullOrWhiteSpace(cheep.Author.Name))
         {
             throw new ArgumentException("Author name cannot be null or empty");
         }
+        */
         
         //Does the author exist? No? Create one
-        var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
-    
+        
         if (author == null)
         {
             author = new Author { Name = cheep.Author.Name, Email = $"{cheep.Author.Name}@chirp.com" };

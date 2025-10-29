@@ -1,21 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Chirp.Core;
 
 namespace Chirp.Web.Pages;
 
+
 public class UserTimelineModel : PageModel
 {
-    private readonly IChatService _service;
-    public List<CheepViewModel> Cheeps { get; set; }
+    private readonly ICheepRepository _repository;
+    public required IEnumerable<CheepDTO> Cheeps { get; set; }
 
-    public UserTimelineModel(IChatService service)
+    public UserTimelineModel(ICheepRepository repository)
     {
-        _service = service;
+        _repository = repository;
     }
 
-    public ActionResult OnGet(string author)
+    public async Task<ActionResult> OnGet(string author)
     {
-        Cheeps = _service.GetCheepsFromAuthor(author);
+        Cheeps = await _repository.ReadCheep(1,author);
         return Page();
     }
 }
