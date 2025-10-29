@@ -9,11 +9,15 @@ public class CheepRepository : ICheepRepository
     
     private readonly ChirpDBContext _dbContext;
 
-    public CheepRepository(ChirpDBContext dbContext)
+    public CheepRepository(ChirpDBContext dbContext, bool skipMigrations = false)
     {
         _dbContext = dbContext;
-        _dbContext.Database.Migrate();
-        DbInitializer.SeedDatabase(_dbContext);
+        
+        if (!skipMigrations)
+        {
+            _dbContext.Database.Migrate();
+            DbInitializer.SeedDatabase(_dbContext);
+        }
     }
     
     public async Task<List<CheepDTO>> ReadCheep(int pageNum = 1, string? author = null)
