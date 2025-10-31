@@ -31,8 +31,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddRazorPages(options =>
 {
-    options.Conventions.AuthorizeFolder("/");
-    options.Conventions.AllowAnonymousToPage("/");
+    //options.Conventions.AuthorizeFolder("/");
+    options.Conventions.AuthorizeFolder("/").AllowAnonymousToAreaPage("Public", "/");
+    
 });
 
 
