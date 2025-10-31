@@ -41,7 +41,6 @@ public class CheepRepository : ICheepRepository
             {
                 Author = new AuthorDTO()
                 {
-                    AuthorId = cheep.Author.AuthorId,
                     Name = cheep.Author.Name,
                     Email = cheep.Author.Email,
                 },
@@ -54,38 +53,44 @@ public class CheepRepository : ICheepRepository
         return results;
     }
     
-    public async Task<int> CreateCheep(CheepDTO cheep)
+    public async Task CreateCheep(string name, string cheep)
     {
-        var author = new Author { Name = cheep.Author.Name, Email = cheep.Author.Email }; //await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
+        Author? author = await _dbContext.Authors.Where(a => a.Name == name).FirstOrDefaultAsync();
+        
+        //var author = new Author { Name = cheep.Author.Name, Email = cheep.Author.Email }; //await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
 
-        if (string.IsNullOrWhiteSpace(cheep.Author.Name))
+        if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Author name cannot be null or empty");
+            throw new UserNotFound("Author name cannot be null or empty");
         }
+
+        IQueryable<Cheep> Cheeps = _dbContext.Cheeps
+            .Where(c => c.Author.Name == name).OrderByDescending(c => c.TimeStamp);
+        
         
         
         //Does the author exist? No? Create one
         
-        if (author == null)
+        /*if (author == null)
         {
             author = new Author { Name = cheep.Author.Name, Email = $"{cheep.Author.Name}@chirp.com" };
             
             _dbContext.Authors.Add(author);
             await _dbContext.SaveChangesAsync();
-        }
+        } */
         
         //Create new cheep
         Cheep newCheep = new Cheep() 
         { 
             Author = author,
-            AuthorId = author.AuthorId,
-            Text = cheep.Cheep, 
-            TimeStamp = cheep.TimeStamp
+            CheepId = Guid.NewGuid(),
+            Text = cheep,
+            TimeStamp = DateTime.Now
         };
     
-        var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
+       /* var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
         await _dbContext.SaveChangesAsync();
-        return queryResult.Entity.CheepId;
+        return queryResult.Entity.CheepId; */
     }
     
     public async Task UpdateCheep(CheepDTO alteredCheep)

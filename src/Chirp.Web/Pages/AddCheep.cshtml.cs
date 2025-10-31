@@ -9,47 +9,15 @@
         {
             private readonly ICheepRepository _repository;
 
-            [BindProperty]
-            public AuthorDTO Author { get; set; }
-
-            [BindProperty]
-            public string Cheep { get; set; }
-
             public AddCheepModel(ICheepRepository repository)
             {
                 _repository = repository;
             }
 
-            // Handle GET request - set the author from query string
-            public void OnGet(string author)
+            public async Task OnPostAsync(String name, String cheep)
             {
-                Author = new AuthorDTO()
-                {
-                    Name = author
-                };
-            }
-
-            // Handle POST request
-            public async Task<IActionResult> OnPostAsync()
-            {
-                if (Author == null || string.IsNullOrWhiteSpace(Cheep))
-                {
-                    ModelState.AddModelError(string.Empty, "Author and Cheep are required");
-                    return Page();
-                }
-
-                var cheepDto = new CheepDTO 
-                { 
-                    Author = Author,
-                    Cheep = Cheep,
-                    TimeStamp = DateTime.Now
-                };
-    
-                await _repository.CreateCheep(cheepDto);
-
-                string link = "/" + Author.Name;
-                // Redirect back to the user's timeline
-                return Redirect(link);
+                await _repository.CreateCheep(name, cheep);
             }
         }
     }
+       

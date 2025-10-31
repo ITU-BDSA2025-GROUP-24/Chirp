@@ -2,7 +2,7 @@
 
 public interface ICheepRepository
 {
-    public Task<int> CreateCheep(CheepDTO newCheep);
+    public Task CreateCheep(string name, string cheep);
 
     public Task<List<CheepDTO>> ReadCheep(int pageNum = 1, string? author = null);
 
