@@ -7,6 +7,7 @@
     {
         public class AddCheepModel : PageModel
         {
+            
             private readonly ICheepRepository _repository;
 
             [BindProperty]
@@ -32,24 +33,21 @@
             // Handle POST request
             public async Task<IActionResult> OnPostAsync()
             {
-                if (Author == null || string.IsNullOrWhiteSpace(Cheep))
+                if (Author == null || string.IsNullOrWhiteSpace(Author.Name) || string.IsNullOrWhiteSpace(Cheep))
                 {
                     ModelState.AddModelError(string.Empty, "Author and Cheep are required");
                     return Page();
                 }
 
-                var cheepDto = new CheepDTO 
-                { 
+                var cheepDto = new CheepDTO
+                {
                     Author = Author,
                     Cheep = Cheep,
                     TimeStamp = DateTime.Now
                 };
-    
-                await _repository.CreateCheep(cheepDto);
 
-                string link = "/" + Author.Name;
-                // Redirect back to the user's timeline
-                return Redirect(link);
+                await _repository.CreateCheep(cheepDto);
+                return Redirect("/" + Author.Name);
             }
         }
     }
