@@ -1,14 +1,27 @@
 ﻿@page "/AddCheep"
+@using Chirp.Infrastructure
 @model Chirp.Web.Pages.AddCheepModel
 
 <!DOCTYPE html>
 <div>
     <form method="post">
-        <p>Whats on your mind @Model.Author.Name? <br />
-            <input type="hidden" asp-for="Author.Name" />
-            <input type="text" size="80%" maxlength="160" asp-for="Cheep" id="Cheep" name="Cheep" required />
-            <input type="submit" value="Cheep" />
-        </p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p>Whats on your mind @User.Identity.Name? <br/>
+                <input type="hidden" name="Author.Name" value="@User.Identity.Name" />
+                <input type="text" size="80%" maxlength="160" asp-for="Cheep" id="Cheep" name="Cheep" required/>
+                <input type="submit" value="Cheep"/>
+            </p>
+        }
+        else
+        {
+            <p>Whats on your mind NoName? <br/>
+                <input type="hidden" asp-for="author"/>
+                <input type="text" size="80%" maxlength="160" asp-for="Cheep" id="Cheep" name="Cheep" required/>
+                <input type="submit" value="Cheep"/>
+            </p>
+        }
+        
         @Html.AntiForgeryToken()
     </form>
 </div>
