@@ -7,6 +7,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var tempDirectory = Path.GetTempPath();
+var databasePath = Path.Join(tempDirectory, "Chat.db");
+
+builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite($"Data Source={databasePath}"));
+builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 // Add services to the container.
 builder.Services.AddAuthentication(options =>
@@ -28,8 +34,6 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AuthorizeFolder("/");
     //options.Conventions.AllowAnonymousToPage("/");
 });
-builder.Services.AddScoped<ICheepRepository, CheepRepository>();
-builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 
 // Load database connection via configuration
