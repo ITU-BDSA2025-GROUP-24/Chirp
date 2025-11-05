@@ -19,13 +19,10 @@ jobs:
         dotnet-version: 8.0.x
         
     - name: Restore dependencies
-      working-directory: Chirp
-      run: dotnet restore
+      run: dotnet restore Chirp/Chirp.sln
       
     - name: Build
-      working-directory: Chirp
-      run: dotnet build --no-restore
+      run: dotnet build Chirp/Chirp.sln --no-restore
       
     - name: Test
-      working-directory: Chirp
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test Chirp/Chirp.sln --no-build --verbosity normal
