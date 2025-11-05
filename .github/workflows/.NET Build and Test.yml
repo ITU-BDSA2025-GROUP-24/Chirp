@@ -12,13 +12,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
+        
     - name: Restore dependencies
+      working-directory: Chirp
       run: dotnet restore
+      
     - name: Build
+      working-directory: Chirp
       run: dotnet build --no-restore
+      
     - name: Test
+      working-directory: Chirp
       run: dotnet test --no-build --verbosity normal
