@@ -1,9 +1,10 @@
 name: Deploy to Azure Web App
 on:
   push:
-    branches: [ new-main ]
+    branches: [ DeployCorrect ]
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -14,14 +15,22 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'   # or 8.0.x to match your app
+          dotnet-version: '8.0.x'
 
-      - name: Publish .NET app
-        run: dotnet publish src/Chirp.Web -c Release -o ./publish
+      - name: Restore
+        run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
 
-      - name: Deploy
+      - name: Publish (framework-dependent)
+        run: dotnet publish src/Chirp.Web/Chirp.Web.csproj -c Release -o ${{ github.workspace }}/publish /p:UseAppHost=false
+
+      - name: Create deployment package
+        run: |
+          cd "${{ github.workspace }}/publish"
+          zip -r "${{ github.workspace }}/site.zip" .
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: bdsagroup24chirpremotedb
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish      # folder is fine; action will zip it
+          package: ${{ github.workspace }}/site.zip
