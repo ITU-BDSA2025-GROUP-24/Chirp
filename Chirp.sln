@@ -15,15 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{206AA040-B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTest", "UnitTest", "{9FEF9DE7-CD10-4EBB-89D7-C2AC2D6B4337}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Tests", "test/UnitTest/Chirp.Tests/Chirp.Tests.csproj", "{CB16ABD3-5DF0-4FC2-AE96-37A1AB7C00A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Tests", "test\UnitTest\Chirp.Tests\Chirp.Tests.csproj", "{CB16ABD3-5DF0-4FC2-AE96-37A1AB7C00A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTest", "IntegrationTest", "{86DBC952-1E4C-4DA5-973A-842F16E932AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.IntegrationTests", "test/IntegrationTest/Chirp.IntegrationTests/Chirp.IntegrationTests.csproj", "{BCBEB838-A4EF-4AE6-8FA4-C02A120D9D4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.IntegrationTests", "test\IntegrationTest\Chirp.IntegrationTests\Chirp.IntegrationTests.csproj", "{BCBEB838-A4EF-4AE6-8FA4-C02A120D9D4B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "E2ETest", "E2ETest", "{8E4D7DBB-53E8-45C2-8EBA-D581DEC46FE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.E2ETests", "test/E2ETest/Chirp.E2ETests/Chirp.E2ETests.csproj", "{6BE1073C-2B15-473F-9382-CA235E774891}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.E2ETests", "test\E2ETest\Chirp.E2ETests\Chirp.E2ETests.csproj", "{6BE1073C-2B15-473F-9382-CA235E774891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
