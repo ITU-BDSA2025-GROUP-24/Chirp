@@ -21,9 +21,9 @@
                 _repository = repository;
             }
 
-            public async Task OnPostAsync(String name, String cheep)
+            public async Task OnPostAsync(String name, String email, String cheep)
             {
-                await _repository.CreateCheep(name, cheep);
+                await _repository.CreateCheep(name, email, cheep);
             }
 
             // Handle POST request
@@ -36,13 +36,17 @@
                 }
 
                 var cheepDto = new CheepDTO
-                {
-                    Author = Author,
+                {  //
+                    Author = new AuthorDTO()
+                    {
+                        Name = Author.Name,
+                        Email = Author.Email
+                    },
                     Cheep = Cheep,
                     TimeStamp = DateTime.Now
                 };
 
-                await _repository.CreateCheep(cheepDto);
+                await _repository.CreateCheep(Author.Name, Author.Email, Cheep);
                 return Redirect("/" + Author.Name);
             }
         }

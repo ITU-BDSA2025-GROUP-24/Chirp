@@ -24,6 +24,7 @@ public class CheepTests
         Assert.Equal(CheepId, MyCheep.CheepId);
         Assert.Equal(AuthorId, MyCheep.AuthorId);
         Assert.Equal(author.Name, MyCheep.Author.Name);
+        Assert.Equal(author.Email, MyCheep.Author.Email);
         Assert.Equal(Text, MyCheep.Text);
         Assert.Equal(TimeStamp, MyCheep.TimeStamp, TimeSpan.FromSeconds(1));
     }
