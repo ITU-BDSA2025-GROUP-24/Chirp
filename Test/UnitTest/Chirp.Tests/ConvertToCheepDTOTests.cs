@@ -1,7 +1,4 @@
-using Xunit;
-using Chirp.Core;
 using Chirp.Infrastructure;
-using System;
 
 namespace Chirp.Tests;
 
@@ -11,7 +8,7 @@ public class ConvertToCheepDtoTests
     public void ToCheepDTO_ShouldConvertCheepToDTO()
     {
         //Arrange
-        var author = new Author { AuthorId = 1, Name = "Tester"};
+        var author = new Author { AuthorId = 1, Name = "Tester", Email = "tester@example.com"};
         var cheep = new Cheep
         {
             CheepId = 1234,
@@ -30,5 +27,6 @@ public class ConvertToCheepDtoTests
         Assert.Equal(cheep.TimeStamp, dto.TimeStamp);
         Assert.Equal(cheep.Author.AuthorId, dto.Author.AuthorId);
         Assert.Equal(cheep.Author.Name, dto.Author.Name);
+        Assert.Equal(cheep.Author.Email, dto.Author.Email);
     }
 }
