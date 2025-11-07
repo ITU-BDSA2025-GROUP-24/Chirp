@@ -28,7 +28,7 @@ public class CheepRepositoryTests
     
         var cheepDto = new CheepDTO
         {
-            Author = new AuthorDTO { Name = "Chris" },
+            Author = new AuthorDTO { Name = "Chris", Email = "Chris@123.com"},
             Cheep = "This is a test cheep!",
             TimeStamp = DateTime.Now
         };

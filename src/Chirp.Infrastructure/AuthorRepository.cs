@@ -18,20 +18,20 @@ public class AuthorRepository : IAuthorRepository
         return author != null;
     }
     
-    public async Task CreateNewAuthor(int authorId, string name, string email)
+    public async Task CreateNewAuthor(string name, string email)
     {
         bool userExists = await UserExists(name);
         if (userExists)
         {
             throw new Exception("User already exists.");
         }
-
-        _dbContext.Authors.Add(new Author { Name = name, Cheeps = new List<Cheep>() });
+        
+        _dbContext.Authors.Add(new Author {Name = name, Email = email, Cheeps = new List<Cheep>() });
         await _dbContext.SaveChangesAsync();
     }
     
     
-   public async Task<AuthorInfo> GetAuthorByName(string name)
+   public async Task<AuthorDTO> GetAuthorByName(string name)
     {
         var author = await _dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name);
         
@@ -40,15 +40,10 @@ public class AuthorRepository : IAuthorRepository
             throw new UserNotFound($"The user {name} does not exist.");
         }
 
-        var authorInfo = new AuthorInfo(
-            User: author.Name,
-            Email: author.Email
-        );
-
-        return authorInfo;
+        return author.ToAuthorDTO();
     }
     
-    public async Task<AuthorInfo> GetAuthorByEmail(string email)
+    public async Task<AuthorDTO> GetAuthorByEmail(string email)
     {
         var mail = await _dbContext.Authors.FirstOrDefaultAsync(c => c.Email == email);
         
@@ -57,26 +52,7 @@ public class AuthorRepository : IAuthorRepository
             throw new UserNotFound($"The email {email} does not exist.");
         }
 
-        var authorInfo = new AuthorInfo(
-            User: mail.Name,
-            Email: mail.Email
-        );
-
-        return authorInfo;
-    }
-
-    public async Task<AuthorInfo> GetAuthorInfo(string name, string email)
-    {
-        var author = await _dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name  && c.Email == email);
-
-        if (author == null)
-        {
-            throw new UserNotFound($"The user {name} does not exist.");
-        }
-
-        var authorInfo = new AuthorInfo(User: author.Name, Email: author.Email);
-        
-        return authorInfo;
+        return mail.ToAuthorDTO();
     }
 }
 
