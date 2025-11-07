@@ -26,7 +26,6 @@ public class AuthorRepository : IAuthorRepository
             throw new Exception("User already exists.");
         }
         
-        //Generates new authorID using Guid
         _dbContext.Authors.Add(new Author {Name = name, Email = email, Cheeps = new List<Cheep>() });
         await _dbContext.SaveChangesAsync();
     }
