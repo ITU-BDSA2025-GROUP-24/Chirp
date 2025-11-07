@@ -7,7 +7,7 @@ public class AuthorRepository : IAuthorRepository
 {
     private ChirpDBContext _dbContext;
 
-    public AuthorRepository(ChirpDBContext _dBContext)
+    public AuthorRepository(ChirpDBContext _dbContext)
     {
         this._dbContext = _dbContext;
     }

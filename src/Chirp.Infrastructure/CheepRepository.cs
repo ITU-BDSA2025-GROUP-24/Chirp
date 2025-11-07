@@ -59,14 +59,21 @@ public class CheepRepository : ICheepRepository
             throw new UserNotFound("Author name cannot be null or empty");
         }
         
+        Author? author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == name);
+        
        //Does the author exist? No? Create one
-        if (await _authorRepo.UserExists(name))
+        if (author == null)
         {
-           await _authorRepo.CreateNewAuthor(name, email); 
+            author = new Author()
+            {
+                Name = name,
+                Email = email,
+                Cheeps = new List<Cheep>()
+            };
+            _dbContext.Authors.Add(author);
+            await _dbContext.SaveChangesAsync();
         }
         
-        Author? author = await _dbContext.Authors.Where(a => a.Name == name).FirstOrDefaultAsync();
-      
         //Create new cheep
         Cheep newCheep = new Cheep() 
         { 

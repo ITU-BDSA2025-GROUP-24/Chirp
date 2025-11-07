@@ -11,7 +11,7 @@ public class CheepTests
         //Arrange
         var CheepId = 1234;
         var AuthorId = 9876;
-        var author = new Author { AuthorId = AuthorId, Name = "Creator" };
+        var author = new Author { AuthorId = AuthorId, Name = "Creator", Email = "Something@123.com" };
         var Text = "Let there be text!";
         var TimeStamp = DateTime.Now;
         

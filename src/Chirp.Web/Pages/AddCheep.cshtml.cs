@@ -20,11 +20,7 @@
             {
                 _repository = repository;
             }
-
-            public async Task OnPostAsync(String name, String email, String cheep)
-            {
-                await _repository.CreateCheep(name, email, cheep);
-            }
+           
 
             // Handle POST request
             public async Task<IActionResult> OnPostAsync()
