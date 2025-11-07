@@ -52,7 +52,7 @@ public class CheepRepository : ICheepRepository
     
     public async Task<int> CreateCheep(CheepDTO cheep)
     {
-        Author author = new Author { Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
+        Author author = new Author {AuthorId = cheep.Author.AuthorId, Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
  
         if (string.IsNullOrWhiteSpace(cheep.Author.Name))
         {
@@ -63,7 +63,9 @@ public class CheepRepository : ICheepRepository
         Cheep newCheep = new Cheep() 
         { 
             Author = author,
+            AuthorId = author.AuthorId,
             Text = cheep.Cheep,
+            CheepId = cheep.CheepId,
             TimeStamp = DateTime.Now
         };
     
