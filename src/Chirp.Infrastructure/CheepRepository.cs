@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Chirp.Core;
 using Chirp.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Chirp.Infrastructure;
 
@@ -9,12 +10,10 @@ public class CheepRepository : ICheepRepository
     private int pageLength = 32;
     
     private readonly ChirpDBContext _dbContext;
-    private readonly IAuthorRepository _authorRepo; 
-
-    public CheepRepository(ChirpDBContext dbContext, IAuthorRepository authorRepo, bool skipMigrations = false)
+   
+    public CheepRepository(ChirpDBContext dbContext, bool skipMigrations = false)
     {
         _dbContext = dbContext;
-        _authorRepo = authorRepo;
         
         if (!skipMigrations)
         {
@@ -51,47 +50,27 @@ public class CheepRepository : ICheepRepository
         return results;
     }
     
-    public async Task CreateCheep(string name, string email, string cheep)
+    public async Task<int> CreateCheep(CheepDTO cheep)
     {
-        
-        if (string.IsNullOrWhiteSpace(name))
+        Author author = new Author { Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
+ 
+        if (string.IsNullOrWhiteSpace(cheep.Author.Name))
         {
             throw new UserNotFound("Author name cannot be null or empty");
         }
         
-        Author? author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == name);
-        
-       //Does the author exist? No? Create one
-        if (author == null)
-        {
-            author = new Author()
-            {
-                Name = name,
-                Email = email,
-                Cheeps = new List<Cheep>()
-            };
-            _dbContext.Authors.Add(author);
-            await _dbContext.SaveChangesAsync();
-        }
-        
-        //Create new cheep
+       //Create new cheep
         Cheep newCheep = new Cheep() 
         { 
             Author = author,
-            Text = cheep,
+            Text = cheep.Cheep,
             TimeStamp = DateTime.Now
         };
     
-        _dbContext.Cheeps.Add(newCheep);
+        var result = await _dbContext.Cheeps.AddAsync(newCheep);
         await _dbContext.SaveChangesAsync();
-       
-          
-        // IQueryable<Cheep> Cheeps = _dbContext.Cheeps
-        //.Where(c => c.Author.Name == name).OrderByDescending(c => c.TimeStamp);
-        
-        /* var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
-        
-        return queryResult.Entity.CheepId; */
+        return result.Entity.CheepId;
+
     }
     
 }

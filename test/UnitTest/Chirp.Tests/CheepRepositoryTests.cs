@@ -23,16 +23,18 @@ public class CheepRepositoryTests
     {
         // Arrange
         var dbContext = GetInMemoryDbContext();
-        var authorRepo = new AuthorRepository(dbContext);
-        var repo = new CheepRepository(dbContext, authorRepo, skipMigrations: true);
-        
-        var authorName = "Chris";
-        var authorEmail = "Chris@123.com";
-        var newCheep = "This is a test cheep!";
-        var newCheepId = 1234;
+        var repo = new CheepRepository(dbContext, skipMigrations: true);
+
+    
+        var cheepDto = new CheepDTO
+        {
+            Author = new AuthorDTO { Name = "Chris", Email = "Chris@123.com"},
+            Cheep = "This is a test cheep!",
+            TimeStamp = DateTime.Now
+        };
 
         // Act
-        await repo.CreateCheep(authorName, authorEmail, newCheep);
+        var resultId = await repo.CreateCheep(cheepDto);
 
         // Assert
         var cheep = await dbContext.Cheeps.Include(c => c.Author).FirstOrDefaultAsync();
@@ -40,6 +42,6 @@ public class CheepRepositoryTests
         Assert.NotNull(cheep);
         Assert.Equal("Chris", cheep.Author.Name);
         Assert.Equal("This is a test cheep!", cheep.Text);
-        Assert.Equal(newCheepId, cheep.CheepId);
+        Assert.Equal(resultId, cheep.CheepId);
     }
 }

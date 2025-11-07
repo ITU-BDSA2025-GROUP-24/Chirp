@@ -42,7 +42,7 @@
                     TimeStamp = DateTime.Now
                 };
 
-                await _repository.CreateCheep(Author.Name, Author.Email, Cheep);
+                await _repository.CreateCheep(cheepDto);
                 return Redirect("/" + Author.Name);
             }
         }
