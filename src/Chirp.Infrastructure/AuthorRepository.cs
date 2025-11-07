@@ -26,7 +26,7 @@ public class AuthorRepository : IAuthorRepository
             throw new Exception("User already exists.");
         }
 
-        _dbContext.Authors.Add(new Author { Name = name, Cheeps = new List<Cheep>() });
+        _dbContext.Authors.Add(new Author { Name = name, Email = email});
         await _dbContext.SaveChangesAsync();
     }
     
