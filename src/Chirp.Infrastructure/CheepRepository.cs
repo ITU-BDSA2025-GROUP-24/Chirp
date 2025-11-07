@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Chirp.Core;
+using Chirp.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Chirp.Infrastructure;
 
@@ -8,7 +10,7 @@ public class CheepRepository : ICheepRepository
     private int pageLength = 32;
     
     private readonly ChirpDBContext _dbContext;
-
+   
     public CheepRepository(ChirpDBContext dbContext, bool skipMigrations = false)
     {
         _dbContext = dbContext;
@@ -41,18 +43,8 @@ public class CheepRepository : ICheepRepository
         var results = new List<CheepDTO>();
         foreach (Cheep cheep in cheeps)
         {
-            var result = new CheepDTO
-            {
-                Author = new AuthorDTO()
-                {
-                    AuthorId = cheep.Author.AuthorId,
-                    Name = cheep.Author.Name,
-                    Email = cheep.Author.Email,
-                },
-                Cheep = cheep.Text,
-                TimeStamp = cheep.TimeStamp
-            };
-            
+            var result = cheep.ToCheepDTO();
+           
             results.Add(result); 
         }
         return results;
@@ -60,53 +52,27 @@ public class CheepRepository : ICheepRepository
     
     public async Task<int> CreateCheep(CheepDTO cheep)
     {
-        var author = new Author { Name = cheep.Author.Name, Email = cheep.Author.Email }; //await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == cheep.Author.Name);
-
+        Author author = new Author {AuthorId = cheep.Author.AuthorId, Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
+ 
         if (string.IsNullOrWhiteSpace(cheep.Author.Name))
         {
-            throw new ArgumentException("Author name cannot be null or empty");
+            throw new UserNotFound("Author name cannot be null or empty");
         }
         
-        
-        //Does the author exist? No? Create one
-        
-        if (author == null)
-        {
-            author = new Author { Name = cheep.Author.Name, Email = $"{cheep.Author.Name}@chirp.com" };
-            
-            _dbContext.Authors.Add(author);
-            await _dbContext.SaveChangesAsync();
-        }
-        
-        //Create new cheep
+       //Create new cheep
         Cheep newCheep = new Cheep() 
         { 
             Author = author,
             AuthorId = author.AuthorId,
-            Text = cheep.Cheep, 
-            TimeStamp = cheep.TimeStamp
+            Text = cheep.Cheep,
+            CheepId = cheep.CheepId,
+            TimeStamp = DateTime.Now
         };
     
-        var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
+        var result = await _dbContext.Cheeps.AddAsync(newCheep);
         await _dbContext.SaveChangesAsync();
-        return queryResult.Entity.CheepId;
-    }
-    
-    public async Task UpdateCheep(CheepDTO alteredCheep)
-    {
-        // Find the existing cheep in the database
-        var existingCheep = await _dbContext.Cheeps
-            .FirstOrDefaultAsync(c => c.CheepId == alteredCheep.CheepId);
-    
-        if (existingCheep == null)
-        {
-            throw new ArgumentException($"Cheep with ID {alteredCheep.CheepId} not found");
-        }
-    
-        existingCheep.Text = alteredCheep.Cheep;
-        existingCheep.TimeStamp = alteredCheep.TimeStamp;
+        return result.Entity.CheepId;
 
-        await _dbContext.SaveChangesAsync();
     }
     
 }

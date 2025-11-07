@@ -11,7 +11,7 @@ public class CheepTests
         //Arrange
         var CheepId = 1234;
         var AuthorId = 9876;
-        var author = new Author { AuthorId = AuthorId, Name = "Creator" };
+        var author = new Author { AuthorId = AuthorId, Name = "Creator", Email = "Something@123.com" };
         var Text = "Let there be text!";
         var TimeStamp = DateTime.Now;
         
@@ -24,6 +24,7 @@ public class CheepTests
         Assert.Equal(CheepId, MyCheep.CheepId);
         Assert.Equal(AuthorId, MyCheep.AuthorId);
         Assert.Equal(author.Name, MyCheep.Author.Name);
+        Assert.Equal(author.Email, MyCheep.Author.Email);
         Assert.Equal(Text, MyCheep.Text);
         Assert.Equal(TimeStamp, MyCheep.TimeStamp, TimeSpan.FromSeconds(1));
     }
