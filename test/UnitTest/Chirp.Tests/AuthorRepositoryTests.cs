@@ -24,7 +24,7 @@ public class AuthorRepositoryTests
         var repo = new AuthorRepository(dbContext);
 
         // Act
-        await repo.CreateNewAuthor(1, "Tester", "tester@example.com");
+        await repo.CreateNewAuthor("Tester", "tester@example.com");
 
         // Assert
         var author = await dbContext.Authors.FirstOrDefaultAsync(a => a.Name == "Tester");
