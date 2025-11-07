@@ -10,7 +10,7 @@ public class Cheep
     public required string Text { get; set; }
     [Required]
     public required Author Author { get; set; }
-    [Required]
     public int AuthorId { get; set; }
+    [Required]
     public required DateTime TimeStamp { get; set; }
 }
