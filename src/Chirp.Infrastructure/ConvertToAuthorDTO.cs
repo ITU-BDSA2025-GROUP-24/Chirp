@@ -9,8 +9,9 @@ public static class ConvertToAuthorDTO
     {
         var authorDTO = new AuthorDTO()
         {
+            AuthorId = author.AuthorId,
             Name = author.Name,
-            Email = author.Email,
+            Email = author.Email
         };
         
         return authorDTO;
