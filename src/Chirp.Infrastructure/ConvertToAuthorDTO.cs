@@ -11,6 +11,7 @@ public static class ConvertToAuthorDTO
         {
             Name = author.Name,
             Email = author.Email,
+            AuthorId = author.AuthorId,
         };
         
         return authorDTO;

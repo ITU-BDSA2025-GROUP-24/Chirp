@@ -32,8 +32,7 @@ public class CheepRepository : ICheepRepository
                 _dbContext.Cheeps :
                 _dbContext.Cheeps.Where(c => c.Author.Name == author)
             )
-            .OrderBy(c => c.TimeStamp)
-            .Reverse()
+            .OrderByDescending(d => d.TimeStamp)
             .Skip(pageSize * pageLength)
             .Take(pageLength)
             .Include(c => c.Author)
@@ -50,11 +49,13 @@ public class CheepRepository : ICheepRepository
         return results;
     }
     
-    public async Task<int> CreateCheep(CheepDTO cheep)
+    public async Task CreateCheep(string username, string email, string cheep)
     {
-        Author author = new Author {AuthorId = cheep.Author.AuthorId, Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
+        Author? author =  await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == username);
+        
+        //Author? author = new Author {AuthorId = cheep.Author.AuthorId, Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
  
-        if (string.IsNullOrWhiteSpace(cheep.Author.Name))
+        if (author == null)
         {
             throw new UserNotFound("Author name cannot be null or empty");
         }
@@ -63,16 +64,13 @@ public class CheepRepository : ICheepRepository
         Cheep newCheep = new Cheep() 
         { 
             Author = author,
-            AuthorId = author.AuthorId,
-            Text = cheep.Cheep,
-            CheepId = cheep.CheepId,
+            CheepId = Guid.NewGuid(),
+            Text = cheep,
             TimeStamp = DateTime.Now
         };
-    
-        var result = await _dbContext.Cheeps.AddAsync(newCheep);
-        await _dbContext.SaveChangesAsync();
-        return result.Entity.CheepId;
 
+        _dbContext.Cheeps.Add(newCheep);
+        await _dbContext.SaveChangesAsync();
     }
     
 }

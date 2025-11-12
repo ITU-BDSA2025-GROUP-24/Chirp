@@ -12,7 +12,7 @@ public class AuthorRepository : IAuthorRepository
         this._dbContext = _dbContext;
     }
 
-    public async Task<bool> UserExists(string name)
+    public async Task<bool> UserExists(string name, string email)
     {
         var author = await _dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name);
         return author != null;
@@ -20,13 +20,13 @@ public class AuthorRepository : IAuthorRepository
     
     public async Task CreateNewAuthor(string name, string email)
     {
-        bool userExists = await UserExists(name);
+        bool userExists = await UserExists(name, email);
         if (userExists)
         {
             throw new Exception("User already exists.");
         }
         
-        _dbContext.Authors.Add(new Author {Name = name, Email = email, Cheeps = new List<Cheep>() });
+        _dbContext.Authors.Add(new Author {Name = name, Email = email, Cheeps = new List<Cheep>(), AuthorId = Guid.NewGuid()});
         await _dbContext.SaveChangesAsync();
     }
     
