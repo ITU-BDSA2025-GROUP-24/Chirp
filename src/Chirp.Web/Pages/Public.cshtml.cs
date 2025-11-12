@@ -11,7 +11,7 @@ public class PublicModel : PageModel
     public int CurrentPage { get; private set; } = 1;
     
     [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
+    public new int Page { get; set; } = 1;
     
     public int TotalPages { get; set; }
     
