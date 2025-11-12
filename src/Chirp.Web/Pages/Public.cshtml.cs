@@ -19,7 +19,7 @@ public class PublicModel : PageModel
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
     public AddCheepModel AddCheepModel{ get; set; }
 
-    public PublicModel(ICheepRepository repository)
+    public PublicModel(ICheepRepository repository) 
     {
         _repository = repository;
         AddCheepModel = new AddCheepModel(repository);
