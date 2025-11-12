@@ -30,7 +30,6 @@ public class AuthorRepository : IAuthorRepository
         await _dbContext.SaveChangesAsync();
     }
     
-    
    public async Task<AuthorDTO> GetAuthorByName(string name)
     {
         var author = await _dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name);
