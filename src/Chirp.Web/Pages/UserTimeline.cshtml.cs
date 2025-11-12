@@ -16,9 +16,9 @@ public class UserTimelineModel : PageModel
         _repository = repository;
     }
 
-    public async Task<ActionResult> OnGet(string author)
+    public async Task<ActionResult> OnGet(string author, int i = 1)
     {
-        Cheeps = await _repository.ReadCheep(1,author);
+        Cheeps = await _repository.ReadCheep(i,author);
         return Page();
     }
 }
