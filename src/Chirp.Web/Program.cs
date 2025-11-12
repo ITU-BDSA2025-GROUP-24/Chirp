@@ -1,9 +1,12 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core;
 using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +27,14 @@ builder.Services.AddAuthentication(options =>
     .AddCookie()
     .AddGitHub(o =>
     {
-        o.ClientId = builder.Configuration["GitHub:ClientID"];
-        o.ClientSecret = builder.Configuration["GitHub:ClientSecret"];
+        var clientId = builder.Configuration["GitHub:ClientID"];
+        var clientSecret = builder.Configuration["GitHub:ClientSecret"];
+        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+        {
+            throw new ArgumentNullException(null, "ClientID or ClientSecret is null");
+        }
+        o.ClientId = clientId; 
+        o.ClientSecret = clientSecret; 
         o.CallbackPath = "/signin-github";
     });
 
