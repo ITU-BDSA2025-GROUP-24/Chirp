@@ -8,7 +8,7 @@ public class ConvertToAuthorDTOTests
     public void ToAuthorDTO_ShouldConvertCheepToDTO()
     {
         //Arrange
-        var author = new Author { AuthorId = 1, Name = "Tester", Email = "tester@example.com"};
+        var author = new Author { AuthorId = Guid.NewGuid(), Name = "Tester", Email = "tester@example.com"};
         
         //Act
         var dto = author.ToAuthorDTO();

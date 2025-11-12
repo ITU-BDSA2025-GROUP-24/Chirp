@@ -39,13 +39,13 @@ public class AuthorRepositoryTests
         
         //Arrange
         var dbContext = GetInMemoryDbContext();
-        dbContext.Authors.Add(new Author { Name = "Tester", Email = "test@example.com" });
+        dbContext.Authors.Add(new Author { Name = "Tester", Email = "test@example.com", AuthorId = Guid.NewGuid() });
         await dbContext.SaveChangesAsync();
 
         var repo = new AuthorRepository(dbContext);
 
         //Act
-        var exists = await repo.UserExists("Tester");
+        var exists = await repo.UserExists("Tester", "test@example.com");
 
         //Assert
         Assert.True(exists);
@@ -59,7 +59,7 @@ public class AuthorRepositoryTests
         var repo = new AuthorRepository(dbContext);
 
         //Act
-        var exists = await repo.UserExists("Tester");
+        var exists = await repo.UserExists("Tester", "tester@example.com");
 
         //Assert
         Assert.False(exists);
@@ -70,7 +70,7 @@ public class AuthorRepositoryTests
     {
         //Arrange
         var dbContext = GetInMemoryDbContext();
-        dbContext.Authors.Add(new Author { Name = "Tester", Email = "tester@example.com" });
+        dbContext.Authors.Add(new Author { Name = "Tester", Email = "tester@example.com", AuthorId = Guid.NewGuid() });
         await dbContext.SaveChangesAsync();
 
         var repo = new AuthorRepository(dbContext);
@@ -99,7 +99,7 @@ public class AuthorRepositoryTests
     {
         //Arrange
         var dbContext = GetInMemoryDbContext();
-        dbContext.Authors.Add(new Author { Name = "Tester", Email = "tester@example.com" });
+        dbContext.Authors.Add(new Author { Name = "Tester", Email = "tester@example.com",  AuthorId = Guid.NewGuid() });
         await dbContext.SaveChangesAsync();
 
         var repo = new AuthorRepository(dbContext);

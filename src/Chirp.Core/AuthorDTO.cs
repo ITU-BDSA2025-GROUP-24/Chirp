@@ -4,6 +4,6 @@ public class AuthorDTO
 {
     public required string Name { get; set; }
     
-    public int AuthorId { get; set; }
+    public required Guid AuthorId { get; set; }
     public string Email { get; set; }
 }
