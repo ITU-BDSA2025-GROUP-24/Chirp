@@ -79,7 +79,7 @@ public class AuthorRepositoryTests
         var result = await repo.GetAuthorByName("Tester");
 
         //Assert
-        Assert.Equal("Tester", result.User);
+        Assert.Equal("Tester", result.Name);
         Assert.Equal("tester@example.com", result.Email);
     }
     
@@ -108,7 +108,7 @@ public class AuthorRepositoryTests
         var result = await repo.GetAuthorByEmail("tester@example.com");
         
         //Assert
-        Assert.Equal("Tester", result.User);
+        Assert.Equal("Tester", result.Name);
         Assert.Equal("tester@example.com", result.Email);
     }
     
