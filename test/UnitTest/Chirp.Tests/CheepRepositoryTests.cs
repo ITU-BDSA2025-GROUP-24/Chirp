@@ -28,7 +28,7 @@ public class CheepRepositoryTests
     
         var cheepDto = new CheepDTO
         {
-            Author = new AuthorDTO { Name = "Tester" },
+            Author = new AuthorDTO { Name = "Chris", Email = "Chris@123.com"},
             Cheep = "This is a test cheep!",
             TimeStamp = DateTime.Now
         };
@@ -40,7 +40,7 @@ public class CheepRepositoryTests
         var cheep = await dbContext.Cheeps.Include(c => c.Author).FirstOrDefaultAsync();
     
         Assert.NotNull(cheep);
-        Assert.Equal("Tester", cheep.Author.Name);
+        Assert.Equal("Chris", cheep.Author.Name);
         Assert.Equal("This is a test cheep!", cheep.Text);
         Assert.Equal(resultId, cheep.CheepId);
     }

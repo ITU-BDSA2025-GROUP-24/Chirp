@@ -20,15 +20,7 @@
             {
                 _repository = repository;
             }
-
-            // Handle GET request - set the author from query string
-            public void OnGet(string author)
-            {
-                Author = new AuthorDTO()
-                {
-                    Name = author
-                };
-            }
+           
 
             // Handle POST request
             public async Task<IActionResult> OnPostAsync()
@@ -40,8 +32,12 @@
                 }
 
                 var cheepDto = new CheepDTO
-                {
-                    Author = Author,
+                {  //
+                    Author = new AuthorDTO()
+                    {
+                        Name = Author.Name,
+                        Email = Author.Email
+                    },
                     Cheep = Cheep,
                     TimeStamp = DateTime.Now
                 };
