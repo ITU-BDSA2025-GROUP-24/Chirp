@@ -23,6 +23,14 @@
                 </li>
             }
         </ul>
+        
+        <nav class="pager" aria-label="Pagination" style="margin-top:1rem; display:flex; gap:.5rem; align-items:center;">
+            <a href="/?page=@(Model.CurrentPage - 1)" class="btn">‹ Prev</a>
+
+            <span>Page @Model.CurrentPage </span>
+
+            <a href="/?page=@(Model.CurrentPage + 1)" class="btn">Next ›</a>
+        </nav>
     }
     else
     {
