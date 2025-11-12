@@ -4,13 +4,13 @@ namespace Chirp.Tests;
 
 public class CheepTests
 {
-    public record Cheep(int CheepId, int AuthorId, Author Author, string Text, DateTime TimeStamp);
+    public record Cheep(Guid CheepId, Guid AuthorId, Author Author, string Text, DateTime TimeStamp);
     [Fact]
     public void Test1()
     {
         //Arrange
-        var CheepId = 1234;
-        var AuthorId = 9876;
+        var CheepId = Guid.NewGuid();
+        var AuthorId = Guid.NewGuid();
         var author = new Author { AuthorId = AuthorId, Name = "Creator", Email = "Something@123.com" };
         var Text = "Let there be text!";
         var TimeStamp = DateTime.Now;

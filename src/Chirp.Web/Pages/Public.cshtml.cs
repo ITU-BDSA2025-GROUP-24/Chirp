@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Chirp.Core;
 
@@ -30,12 +31,13 @@ public class PublicModel : PageModel
         Cheeps = await _repository.ReadCheep(CurrentPage);
         Console.WriteLine($"Page={CurrentPage}");
         return Page();
+        
     }
 
     [BindProperty]
-    public string Cheep { get; set; }
-    public async Task OnPostAsync()
+    public string newCheep { get; set; }
+    public async Task OnPostAsync(string username, string email)
     {
-        await AddCheepModel.OnPostAsync();
+        await AddCheepModel.OnPostAsync(username, email, newCheep);
     }
 }
