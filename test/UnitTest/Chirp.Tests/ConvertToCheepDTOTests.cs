@@ -8,11 +8,10 @@ public class ConvertToCheepDtoTests
     public void ToCheepDTO_ShouldConvertCheepToDTO()
     {
         //Arrange
-        var author = new Author { AuthorId = 1, Name = "Tester", Email = "tester@example.com"};
+        var author = new Author { AuthorId = Guid.NewGuid(), Name = "Tester", Email = "tester@example.com"};
         var cheep = new Cheep
         {
-            CheepId = 1234,
-            AuthorId = author.AuthorId,
+            CheepId = Guid.NewGuid(),
             Author = author,
             Text = "Test, Test 123.",
             TimeStamp = new DateTime(98765431)
