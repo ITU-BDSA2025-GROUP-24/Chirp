@@ -17,7 +17,7 @@ namespace Chirp.Web.Pages
            
 
         // Handle POST request
-        public async Task OnPostAsync(String username, String email, String cheep)
+        public async Task OnPostAsync(string username, string email, string cheep)
         {
             await _repository.CreateCheep(username, email, cheep);
         }

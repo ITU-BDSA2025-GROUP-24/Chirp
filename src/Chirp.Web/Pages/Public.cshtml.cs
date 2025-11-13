@@ -36,7 +36,7 @@ public class PublicModel : PageModel
 
     [BindProperty]
     public string newCheep { get; set; }
-    public async Task OnPostAsync(string username, string email)
+    public async Task OnPostAddCheep(string username, string email)
     {
         await AddCheepModel.OnPostAsync(username, email, newCheep);
     }
