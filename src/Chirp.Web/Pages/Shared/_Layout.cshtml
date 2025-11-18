@@ -5,16 +5,22 @@
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="/favicon/favicon.ico">
 </head>
+
 <body>
+@await Component.InvokeAsync("Index")
 <div class=page>
-    <h1><img src="/images/icon1.png" alt="Icon1"/>Chirp!</h1><div class=navigation>
+    <h1>
+        <img src="/images/icon1.png" alt="Icon1"/>Chirp!
+    </h1>
+    
+    <div class=navigation>
         @if (User.Identity.IsAuthenticated)
         {
             <div>
                 <a href="/@(User.Identity.Name)">my timeline</a> |
                 <a href="/">public timeline</a> |
                 <a href="/addCheep">Cheep</a> |
-                <a ... >logout [@(User.Identity.Name)]</a>
+                <a ...>logout [@(User.Identity.Name)]</a>
                 <input type="text" placeholder="Search..">
             </div>
         }
@@ -22,18 +28,18 @@
         {
             <div>
                 <a href="/">public timeline</a> |
-                <a ... >register</a>
-                <a ... >login</a>
+                <a ...>register</a>
+                <a ...>login</a>
             </div>
         }
     </div>
     <div class=body>
-            @RenderBody()
+        @RenderBody()
     </div>
     <div class=footer>
         Chirp &mdash; An ASP.NET Application
     </div>
-    
+
 </div>
 
 </body>
