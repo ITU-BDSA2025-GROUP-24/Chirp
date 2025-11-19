@@ -9,11 +9,6 @@ public class PublicModel : PageModel
 {
     private readonly ICheepRepository _repository;
     private readonly IAuthorRepository _authorRepository;
-
-    public PublicModel(IAuthorRepository authorRepository)
-    {
-        _authorRepository = authorRepository;
-    }
     
     public int CurrentPage { get; private set; } = 1;
     
@@ -25,10 +20,11 @@ public class PublicModel : PageModel
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
     public AddCheepModel AddCheepModel{ get; set; }
 
-    public PublicModel(ICheepRepository repository) 
+    public PublicModel(ICheepRepository repository, IAuthorRepository authorRepository) 
     {
         _repository = repository;
         AddCheepModel = new AddCheepModel(repository);
+        _authorRepository = authorRepository;
     }
 
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
