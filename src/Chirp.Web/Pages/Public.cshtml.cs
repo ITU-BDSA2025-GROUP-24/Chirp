@@ -9,6 +9,11 @@ public class PublicModel : PageModel
 {
     private readonly ICheepRepository _repository;
     private readonly IAuthorRepository _authorRepository;
+
+    public PublicModel(IAuthorRepository authorRepository)
+    {
+        _authorRepository = authorRepository;
+    }
     
     public int CurrentPage { get; private set; } = 1;
     
@@ -57,7 +62,7 @@ public class PublicModel : PageModel
     
 
     [BindProperty]
-    public string? Message { get; set; }
+    public string Message { get; set; }
     public async Task OnPostAddCheep()
     {
         //If any is empty then simply return instead of create cheep
