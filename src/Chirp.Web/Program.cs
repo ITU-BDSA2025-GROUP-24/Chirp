@@ -47,7 +47,7 @@ builder.Services.AddRazorPages(options =>
 
 
 // Load database connection via configuration
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddSession();
