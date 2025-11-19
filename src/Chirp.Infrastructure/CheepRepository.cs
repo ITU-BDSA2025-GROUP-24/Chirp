@@ -53,8 +53,6 @@ public class CheepRepository : ICheepRepository
     {
         Author? author =  await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == username);
         
-        //Author? author = new Author {AuthorId = cheep.Author.AuthorId, Name = cheep.Author.Name, Email = cheep.Author.Email, Cheeps = new List<Cheep>() };
- 
         if (author == null)
         {
             throw new UserNotFound("Author name cannot be null or empty");
