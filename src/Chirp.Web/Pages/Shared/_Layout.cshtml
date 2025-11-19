@@ -7,20 +7,20 @@
 </head>
 
 <body>
+
 @await Component.InvokeAsync("Index")
 <div class=page>
     <h1>
         <img src="/images/icon1.png" alt="Icon1"/>Chirp!
     </h1>
-    
+
     <div class=navigation>
-        @if (User.Identity.IsAuthenticated)
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             <div>
                 <a href="/@(User.Identity.Name)">my timeline</a> |
                 <a href="/">public timeline</a> |
-                <a href="/addCheep">Cheep</a> |
-                <a ...>logout [@(User.Identity.Name)]</a>
+                <a href="/Account/Logout">logout [@(User.Identity.Name)]</a>
                 <input type="text" placeholder="Search..">
             </div>
         }
@@ -28,8 +28,7 @@
         {
             <div>
                 <a href="/">public timeline</a> |
-                <a ...>register</a>
-                <a ...>login</a>
+                <a href="/Account/Login">login</a>
             </div>
         }
     </div>
