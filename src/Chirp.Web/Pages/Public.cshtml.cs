@@ -57,7 +57,7 @@ public class PublicModel : PageModel
     
 
     [BindProperty]
-    public string? Message { get; set; }
+    public string Message { get; set; }
     public async Task OnPostAddCheep()
     {
         //If any is empty then simply return instead of create cheep
