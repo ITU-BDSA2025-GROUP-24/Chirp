@@ -8,6 +8,7 @@ namespace Chirp.Web.Pages;
 public class PublicModel : PageModel
 {
     private readonly ICheepRepository _repository;
+    private readonly IAuthorRepository _authorRepository;
     
     public int CurrentPage { get; private set; } = 1;
     
@@ -34,17 +35,38 @@ public class PublicModel : PageModel
         
     }
 
+    private async Task IdentityCheck()
+    {
+        if (User.Identity == null || User.Identity.Name == null)
+        {
+            return;
+        }
+        var username = User.Identity.Name;
+        var email = User.Identity.Name + "@chirp.com";
+
+        if (username == null)
+        {
+            return;
+        }
+
+        if (!await _authorRepository.UserExists(username, email))
+        {
+            await _authorRepository.CreateNewAuthor(username, email);
+        }
+    }
+    
+
     [BindProperty]
-    public string? NewCheep { get; set; }
+    public string? Message { get; set; }
     public async Task OnPostAddCheep()
     {
         //If any is empty then simply return instead of create cheep
-        if (User.Identity == null || User.Identity.Name == null || NewCheep == null)
+        if (User.Identity == null || User.Identity.Name == null || Message == null)
         {
             return; 
         }
         string username = User.Identity.Name;
         string email = User.Identity.Name + "@chirp.com";
-        await AddCheepModel.OnPostAsync(username, email, NewCheep);
+        await AddCheepModel.OnPostAsync(username, email, Message);
     }
 }

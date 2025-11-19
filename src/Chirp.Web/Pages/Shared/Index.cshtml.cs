@@ -22,14 +22,14 @@ public class IndexViewComponent : ViewComponent
             return View(); 
         }
         
-        //Check if the user already exists, if yes now need to create it again 
+        //Check if the user already exists, yes? Do not create it again 
         bool doesUsernameExist = await _authorRepository.UserExists(User.Identity.Name, User.Identity.Name + "@chirp.com");
         if (!doesUsernameExist)
         {
             await _authorRepository.CreateNewAuthor(User.Identity.Name, User.Identity.Name + "@chirp.com");
         }
 
-        //AuthorDTO newAuthorDTO = await _authorRepository.GetAuthorByName(User.Identity.Name);
+        AuthorDTO newAuthorDTO = await _authorRepository.GetAuthorByName(User.Identity.Name);
         
         return View();
     }

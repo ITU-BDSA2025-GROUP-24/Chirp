@@ -1,20 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core;
 using Chirp.Infrastructure;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var tempDirectory = Path.GetTempPath();
-var databasePath = Path.Join(tempDirectory, "Chat.db");
+// Load database connection via configuration
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    var tempDirectory = Path.GetTempPath();
+    connectionString = $"Data Source={Path.Join(tempDirectory, "Chat.db")}";
+}
 
-builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite($"Data Source={databasePath}"));
+// Register DbContext
+builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddMemoryCache();
 
-// Add services to the container.
+// Add authentication services
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -31,36 +37,43 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddRazorPages(options =>
 {
-    //options.Conventions.AuthorizeFolder("/");
-    options.Conventions.AuthorizeFolder("/").AllowAnonymousToAreaPage("Public", "/");
-    
+    options.Conventions.AllowAnonymousToPage("/Public");
 });
-
-
-// Load database connection via configuration
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddSession();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-app.MapRazorPages();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+
+app.MapRazorPages();
+
+// API endpoints for login/logout
+app.MapGet("/Account/Login", () =>
+{
+    return Results.Challenge(
+        new AuthenticationProperties { RedirectUri = "/" },
+        authenticationSchemes: new List<string> { "GitHub" }
+    );
+}).AllowAnonymous();
+
+app.MapGet("/Account/Logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+});
 
 app.Run();
