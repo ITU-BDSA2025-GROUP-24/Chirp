@@ -13,14 +13,14 @@ public class PublicModel : PageModel
     public int CurrentPage { get; private set; } = 1;
     
     [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
+    public new int Page { get; set; } = 1;
     
     public int TotalPages { get; set; }
     
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
     public AddCheepModel AddCheepModel{ get; set; }
 
-    public PublicModel(ICheepRepository repository)
+    public PublicModel(ICheepRepository repository) 
     {
         _repository = repository;
         AddCheepModel = new AddCheepModel(repository);

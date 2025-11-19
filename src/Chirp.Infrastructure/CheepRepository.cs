@@ -7,7 +7,7 @@ namespace Chirp.Infrastructure;
 
 public class CheepRepository : ICheepRepository
 {
-    private int pageLength = 32;
+    private readonly int _pageLength = 32;
     
     private readonly ChirpDBContext _dbContext;
    
@@ -33,8 +33,8 @@ public class CheepRepository : ICheepRepository
                 _dbContext.Cheeps.Where(c => c.Author.Name == author)
             )
             .OrderByDescending(d => d.TimeStamp)
-            .Skip(pageSize * pageLength)
-            .Take(pageLength)
+            .Skip(pageSize * _pageLength)
+            .Take(_pageLength)
             .Include(c => c.Author)
             .ToListAsync();
             
@@ -58,7 +58,7 @@ public class CheepRepository : ICheepRepository
             throw new UserNotFound("Author name cannot be null or empty");
         }
         
-       //Create new cheep
+        //Create new cheep
         Cheep newCheep = new Cheep() 
         { 
             Author = author,
