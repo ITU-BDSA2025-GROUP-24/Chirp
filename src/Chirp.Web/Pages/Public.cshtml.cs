@@ -57,16 +57,16 @@ public class PublicModel : PageModel
     
 
     [BindProperty]
-    public string? NewCheep { get; set; }
+    public string? Message { get; set; }
     public async Task OnPostAddCheep()
     {
         //If any is empty then simply return instead of create cheep
-        if (User.Identity == null || User.Identity.Name == null || NewCheep == null)
+        if (User.Identity == null || User.Identity.Name == null || Message == null)
         {
             return; 
         }
         string username = User.Identity.Name;
         string email = User.Identity.Name + "@chirp.com";
-        await AddCheepModel.OnPostAsync(username, email, NewCheep);
+        await AddCheepModel.OnPostAsync(username, email, Message);
     }
 }
