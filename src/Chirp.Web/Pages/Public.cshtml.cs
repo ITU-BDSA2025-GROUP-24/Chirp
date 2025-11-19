@@ -8,6 +8,7 @@ namespace Chirp.Web.Pages;
 public class PublicModel : PageModel
 {
     private readonly ICheepRepository _repository;
+    private readonly IAuthorRepository _authorRepository;
     
     public int CurrentPage { get; private set; } = 1;
     
@@ -33,6 +34,27 @@ public class PublicModel : PageModel
         return Page();
         
     }
+
+    private async Task IdentityCheck()
+    {
+        if (User.Identity == null || User.Identity.Name == null)
+        {
+            return;
+        }
+        var username = User.Identity.Name;
+        var email = User.Identity.Name + "@chirp.com";
+
+        if (username == null)
+        {
+            return;
+        }
+
+        if (!await _authorRepository.UserExists(username, email))
+        {
+            await _authorRepository.CreateNewAuthor(username, email);
+        }
+    }
+    
 
     [BindProperty]
     public string? NewCheep { get; set; }
