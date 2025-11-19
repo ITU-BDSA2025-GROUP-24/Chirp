@@ -4,7 +4,7 @@ namespace Chirp.Infrastructure;
 
 public class Cheep
 {
-    //Generates 128bit unique ID for cheep
+    //Generates 128bit unique ID for cheep 
     [Required]
     public required Guid CheepId { get; set; }
     [Required]

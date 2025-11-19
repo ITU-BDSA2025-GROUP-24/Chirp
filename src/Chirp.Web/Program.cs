@@ -4,6 +4,7 @@ using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Load database connection via configuration
