@@ -8,7 +8,6 @@ namespace Chirp.Web.Pages;
 public class PublicModel : PageModel
 {
     private readonly ICheepRepository _repository;
-    private readonly IAuthorRepository _authorRepository;
     
     public int CurrentPage { get; private set; } = 1;
     
@@ -18,12 +17,10 @@ public class PublicModel : PageModel
     public int TotalPages { get; set; }
     
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
-    public AddCheepModel AddCheepModel{ get; set; }
 
-    public PublicModel(ICheepRepository repository) 
+    public PublicModel(ICheepRepository repository)
     {
         _repository = repository;
-        AddCheepModel = new AddCheepModel(repository);
     }
 
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
@@ -32,41 +29,30 @@ public class PublicModel : PageModel
         Cheeps = await _repository.ReadCheep(CurrentPage);
         Console.WriteLine($"Page={CurrentPage}");
         return Page();
-        
     }
-
-    private async Task IdentityCheck()
-    {
-        if (User.Identity == null || User.Identity.Name == null)
-        {
-            return;
-        }
-        var username = User.Identity.Name;
-        var email = User.Identity.Name + "@chirp.com";
-
-        if (username == null)
-        {
-            return;
-        }
-
-        if (!await _authorRepository.UserExists(username, email))
-        {
-            await _authorRepository.CreateNewAuthor(username, email);
-        }
-    }
-    
 
     [BindProperty]
     public string? Message { get; set; }
-    public async Task OnPostAddCheep()
+    public async Task<IActionResult> OnPostAsync([FromQuery(Name = "page")] int page = 1)
     {
         //If any is empty then simply return instead of create cheep
-        if (User.Identity == null || User.Identity.Name == null || Message == null)
+        if (User.Identity == null || User.Identity.Name == null || string.IsNullOrWhiteSpace(Message))
         {
-            return; 
+           return Page();
         }
+        
         string username = User.Identity.Name;
         string email = User.Identity.Name + "@chirp.com";
-        await AddCheepModel.OnPostAsync(username, email, Message);
+        
+        try
+        {
+            await _repository.CreateCheep(username, email, Message);
+            return RedirectToPage("/Public", new {page});
+        }
+        catch (Exception msgEx)
+        {
+            ModelState.AddModelError(string.Empty, $"Failed to create cheep: {msgEx.Message}");
+            return Page();
+        }
     }
 }

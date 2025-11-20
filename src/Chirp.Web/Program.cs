@@ -4,19 +4,34 @@ using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Load database connection via configuration
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
+// Determine database connection based on environment.
+var connection = String.Empty;
+
+if (builder.Environment.IsDevelopment())
 {
+    // For development, use local SQLite database
     var tempDirectory = Path.GetTempPath();
-    connectionString = $"Data Source={Path.Join(tempDirectory, "Chat.db")}";
+    connection = $"Data Source={Path.Join(tempDirectory, "Chat.db")}";
+}
+else
+{
+    // For production, try to get connection string from configuration
+    connection = builder.Configuration.GetConnectionString("DefaultConnection");
+    
+    // Use local database if connection string is not configured
+    if (string.IsNullOrEmpty(connection))
+    {
+        var tempDirectory = Path.GetTempPath();
+        connection = $"Data Source={Path.Join(tempDirectory, "Chat.db")}";
+    }
 }
 
-// Register DbContext
-builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
+// Configures ChirpDBContext with database connection.
+builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connection));
+
+// Add repositories and memory cache
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddMemoryCache();
@@ -28,44 +43,82 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = "GitHub";
     })
-    .AddCookie()
+    .AddCookie(options =>
+    {
+        // Configure cookie for HTTP in development
+        if (builder.Environment.IsDevelopment())
+        {
+            options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        }
+    })
     .AddGitHub(o =>
     {
         var clientId = builder.Configuration["GitHub:ClientID"];
         var clientSecret = builder.Configuration["GitHub:ClientSecret"];
+        
         if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
         {
-            throw new ArgumentNullException(null, "ClientID or ClientSecret is null");
+            throw new InvalidOperationException("GitHub ClientID or ClientSecret is not configured properly.");
         }
+        
         o.ClientId = clientId; 
         o.ClientSecret = clientSecret; 
         o.CallbackPath = "/signin-github";
     });
 
-builder.Services.AddRazorPages(options =>
+// Configure Razor Pages
+builder.Services.AddRazorPages();
+
+// Configure antiforgery to work with HTTP in development
+builder.Services.AddAntiforgery(options =>
 {
-    options.Conventions.AllowAnonymousToPage("/Public");
+    if (builder.Environment.IsDevelopment())
+    {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+    }
 });
 
 builder.Services.AddSession();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Database migration and initialization
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ChirpDBContext>();
+
+    // Applies database migrations
+    context.Database.Migrate();
+
+    // Seed the database with initial data
+    DbInitializer.SeedDatabase(context);
+}
+
+// Configures the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
+}
+else
+{
+    // In development, show detailed errors and don't force HTTPS
+    app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
+// Important! - Authentication and Authorization has to come after UseRouting and before MapRazorPages
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseSession();
 
+// Map endpoints
 app.MapRazorPages();
 
 // API endpoints for login/logout
