@@ -32,17 +32,17 @@ public class PublicModel : PageModel
     }
 
     [BindProperty]
-    public string? Message { get; set; }
+    public string Message { get; set; }
     public async Task<IActionResult> OnPostAsync([FromQuery(Name = "page")] int page = 1)
-    {
+   {
         //If any is empty then simply return instead of create cheep
         if (User.Identity == null || User.Identity.Name == null || string.IsNullOrWhiteSpace(Message))
         {
            return Page();
         }
         
-        string username = User.Identity.Name;
-        string email = User.Identity.Name + "@chirp.com";
+        var username = User.Identity.Name;
+        var email = User.Identity.Name + "@chirp.com";
         
         try
         {
@@ -54,5 +54,5 @@ public class PublicModel : PageModel
             ModelState.AddModelError(string.Empty, $"Failed to create cheep: {msgEx.Message}");
             return Page();
         }
-    }
+   }
 }
