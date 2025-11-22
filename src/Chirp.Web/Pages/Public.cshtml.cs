@@ -8,6 +8,7 @@ namespace Chirp.Web.Pages;
 public class PublicModel : PageModel
 {
     private readonly ICheepRepository _repository;
+
     private readonly IAuthorRepository _authorRepository;
     
     public int CurrentPage { get; private set; } = 1;
@@ -39,18 +40,21 @@ public class PublicModel : PageModel
         }
         Console.WriteLine($"Page={CurrentPage}");
         return Page();
-        
     }
 
-    private async Task IdentityCheck()
-    {
-        if (User.Identity == null || User.Identity.Name == null)
+    [BindProperty]
+    public string Message { get; set; }
+    public async Task<IActionResult> OnPostAsync([FromQuery(Name = "page")] int page = 1)
+   {
+        //If any is empty then simply return instead of create cheep
+        if (User.Identity == null || User.Identity.Name == null || string.IsNullOrWhiteSpace(Message))
         {
             Console.WriteLine("User.Identity is null");
             Console.WriteLine("User.Identity is null");
             Console.WriteLine("User.Identity is null");
             return;
         }
+        
         var username = User.Identity.Name;
         var email = User.Identity.Name + "@chirp.com";
 
@@ -122,10 +126,8 @@ public class PublicModel : PageModel
         //If any is empty then simply return instead of create cheep
         if (User.Identity == null || User.Identity.Name == null || Message == null)
         {
-            return; 
+            ModelState.AddModelError(string.Empty, $"Failed to create cheep: {msgEx.Message}");
+            return Page();
         }
-        string username = User.Identity.Name;
-        string email = User.Identity.Name + "@chirp.com";
-        await AddCheepModel.OnPostAsync(username, email, Message);
-    }
+   }
 }
