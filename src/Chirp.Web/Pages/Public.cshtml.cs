@@ -52,7 +52,7 @@ public class PublicModel : PageModel
             Console.WriteLine("User.Identity is null");
             Console.WriteLine("User.Identity is null");
             Console.WriteLine("User.Identity is null");
-            return;
+            return page();
         }
         
         var username = User.Identity.Name;
@@ -119,8 +119,6 @@ public class PublicModel : PageModel
     }
     
 
-    [BindProperty]
-    public string Message { get; set; }
     public async Task OnPostAddCheep()
     {
         //If any is empty then simply return instead of create cheep
