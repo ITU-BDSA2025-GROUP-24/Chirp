@@ -49,6 +49,27 @@ public class CheepRepository : ICheepRepository
         return results;
     }
     
+    public async Task<IEnumerable<CheepDTO>> ReadCheepForAuthors(int pageNum, IEnumerable<Guid> authorIds)
+    {
+        const int pageSize = 32; // or whatever you use
+        var ids = authorIds.ToList();
+        if (!ids.Any())
+            return Enumerable.Empty<CheepDTO>();
+
+        var query = _dbContext.Cheeps
+            .Include(c => c.Author)
+            .Where(c => ids.Contains(c.Author.AuthorId))
+            .OrderByDescending(c => c.TimeStamp);
+
+        var cheeps = await query
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return cheeps.Select(c => c.ToCheepDTO());
+    }
+
+    
     public async Task CreateCheep(string username, string email, string cheep)
     {
         Author? author =  await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == username);

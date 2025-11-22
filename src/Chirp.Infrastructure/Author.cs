@@ -7,4 +7,6 @@ public class Author
     public required string Name { get; set; }
     public string? Email { get; set; }
     public ICollection<Cheep> Cheeps { get; set; } = new List<Cheep>();
+    
+    public List<Guid> FollowsId { get; set; } =  new List<Guid>();
 } 
