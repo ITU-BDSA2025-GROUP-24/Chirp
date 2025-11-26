@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Chirp.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Chirp.Core;
 
 namespace Chirp.Web.Pages;
 
@@ -10,68 +10,142 @@ public class PublicModel : PageModel
     private readonly ICheepRepository _repository;
     private readonly IAuthorRepository _authorRepository;
 
-    public PublicModel(IAuthorRepository authorRepository)
-    {
-        _authorRepository = authorRepository;
-    }
-    
     public int CurrentPage { get; private set; } = 1;
-    
-    [BindProperty(SupportsGet = true)]
-    public new int Page { get; set; } = 1;
-    
-    public int TotalPages { get; set; }
-    
-    public required IEnumerable<CheepDTO> Cheeps { get; set; }
-    public AddCheepModel AddCheepModel{ get; set; }
 
-    public PublicModel(ICheepRepository repository) 
+    [BindProperty(SupportsGet = true)]
+    public int Page { get; set; } = 1;
+
+    public int TotalPages { get; set; }
+
+    public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
+
+    public IEnumerable<Guid> Followings { get; set; } = Enumerable.Empty<Guid>();
+
+    public AddCheepModel AddCheepModel { get; set; }
+
+    public PublicModel(ICheepRepository repository, IAuthorRepository authorRepository)
     {
         _repository = repository;
+        _authorRepository = authorRepository;
         AddCheepModel = new AddCheepModel(repository);
     }
 
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
     {
         CurrentPage = page < 1 ? 1 : page;
+
+        await IdentityCheck();
+
         Cheeps = await _repository.ReadCheep(CurrentPage);
+
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
+        }
+
         Console.WriteLine($"Page={CurrentPage}");
         return Page();
-        
     }
-
+    
     private async Task IdentityCheck()
     {
         if (User.Identity == null || User.Identity.Name == null)
         {
+            Console.WriteLine("User.Identity is null");
             return;
         }
-        var username = User.Identity.Name;
-        var email = User.Identity.Name + "@chirp.com";
 
-        if (username == null)
-        {
-            return;
-        }
+        var username = User.Identity.Name;
+        var email = username + "@chirp.com";
 
         if (!await _authorRepository.UserExists(username, email))
         {
+            Console.WriteLine($"User {username} does not exist - creating.");
             await _authorRepository.CreateNewAuthor(username, email);
         }
+
+        var dto = await _authorRepository.GetAuthorByName(username);
+        Console.WriteLine($"User {username} exists with id {dto.AuthorId}");
     }
     
-
-    [BindProperty]
-    public string Message { get; set; }
-    public async Task OnPostAddCheep()
+    public async Task<bool> isFollowing(Guid authorId)
     {
-        //If any is empty then simply return instead of create cheep
-        if (User.Identity == null || User.Identity.Name == null || Message == null)
+        if (User.Identity == null || User.Identity.Name == null)
         {
-            return; 
+            return false;
         }
+
+        var following = await _authorRepository.isFollowing(User.Identity.Name, authorId);
+        Console.WriteLine($"{User.Identity.Name} following {authorId}: {following}");
+        return following;
+    }
+    
+    public async Task<IActionResult> OnPostFollowAsync(Guid id, int page)
+    {
+        Console.WriteLine($"OnPostFollowAsync HIT: id={id}, page={page}");
+
+        if (!(User.Identity?.IsAuthenticated ?? false))
+        {
+            return RedirectToPage("/Login");
+        }
+
+        CurrentPage = page < 1 ? 1 : page;
+
+        if (await isFollowing(id))
+        {
+            await _authorRepository.UnFollowAsync(User.Identity!.Name!, id);
+            Console.WriteLine("Unfollowed");
+        }
+        else
+        {
+            await _authorRepository.AddFollowAsync(User.Identity!.Name!, id);
+            Console.WriteLine("Followed");
+        }
+
+        Console.WriteLine("REDIRECTING TO GET with page=" + CurrentPage);
+        return RedirectToPage("/Public", new { page = CurrentPage });
+    }
+    
+    [BindProperty]
+    public string Message { get; set; } = string.Empty;
+    
+    public async Task<IActionResult> OnPostAsync(int page)
+    {
+        CurrentPage = page < 1 ? 1 : page;
+
+        await IdentityCheck();
+
+        if (User.Identity == null || User.Identity.Name == null || string.IsNullOrWhiteSpace(Message))
+        {
+            // Re-display page if something is wrong
+            Cheeps = await _repository.ReadCheep(CurrentPage);
+
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
+            }
+
+            return Page();
+        }
+
         string username = User.Identity.Name;
-        string email = User.Identity.Name + "@chirp.com";
-        await AddCheepModel.OnPostAsync(username, email, Message);
+        string email = username + "@chirp.com";
+
+        try
+        {
+            await AddCheepModel.OnPostAsync(username, email, Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error when adding cheep: " + ex.Message);
+            Cheeps = await _repository.ReadCheep(CurrentPage);
+            if (User.Identity.IsAuthenticated)
+            {
+                Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
+            }
+            return Page();
+        }
+        
+        return RedirectToPage("/Public", new { page = CurrentPage });
     }
 }
