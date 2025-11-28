@@ -110,7 +110,7 @@ public class PublicModel : PageModel
         Console.WriteLine("REDIRECTING TO GET with page=" + CurrentPage);
         return RedirectToPage("/Public", new { page = CurrentPage });
     }
-    
+     
     [BindProperty]
     public string Message { get; set; } = string.Empty;
     
