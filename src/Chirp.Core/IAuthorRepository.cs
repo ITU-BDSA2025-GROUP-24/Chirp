@@ -8,6 +8,7 @@ public interface IAuthorRepository
     Task CreateNewAuthor(string name, string email);
     Task <AuthorDTO> GetAuthorByName (string name);
     Task <AuthorDTO> GetAuthorByEmail (string email);
+    Task <AuthorDTO> GetAuthorById(Guid authorId);
 
     Task<AuthorDTO> AddFollowAsync(String AuthorName, Guid FollowerId);
 

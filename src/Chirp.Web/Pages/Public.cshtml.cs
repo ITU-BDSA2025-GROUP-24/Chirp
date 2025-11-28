@@ -12,12 +12,7 @@ public class PublicModel : PageModel
 
     public int CurrentPage { get; private set; } = 1;
 
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
-
-    public int TotalPages { get; set; }
-
-    public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
+   public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
 
     public IEnumerable<Guid> Followings { get; set; } = Enumerable.Empty<Guid>();
 
