@@ -12,8 +12,6 @@ public class PublicModel : PageModel
     private readonly IAuthorRepository _authorRepository;
 
     public int CurrentPage { get; private set; } = 1;
-
-    [BindProperty(SupportsGet = true)]
     
     private AuthorDTO dto;
 
