@@ -65,7 +65,6 @@ public class PublicModel : PageModel
         }
 
         var dto = await _authorRepository.GetAuthorByName(username);
-        Console.WriteLine($"User {username} exists with id {dto.AuthorId}");
     }
     
     public async Task<bool> isFollowing(Guid authorId)
@@ -76,7 +75,6 @@ public class PublicModel : PageModel
         }
 
         var following = await _authorRepository.isFollowing(User.Identity.Name, authorId);
-        Console.WriteLine($"{User.Identity.Name} following {authorId}: {following}");
         return following;
     }
     
