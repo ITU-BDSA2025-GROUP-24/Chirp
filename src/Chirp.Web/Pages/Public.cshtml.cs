@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Chirp.Core;
+using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -13,6 +14,7 @@ public class PublicModel : PageModel
     public int CurrentPage { get; private set; } = 1;
 
     [BindProperty(SupportsGet = true)]
+
     public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
 
     public IEnumerable<Guid> Followings { get; set; } = Enumerable.Empty<Guid>();
@@ -59,7 +61,7 @@ public class PublicModel : PageModel
             await _authorRepository.CreateNewAuthor(username, email);
         }
 
-        var dto = await _authorRepository.GetAuthorByName(username);
+        dto = await _authorRepository.GetAuthorByName(username);
     }
     
     public async Task<bool> isFollowing(Guid authorId)
@@ -67,6 +69,11 @@ public class PublicModel : PageModel
         if (User.Identity == null || User.Identity.Name == null)
         {
             return false;
+        }
+
+        if (dto != null)
+        {
+            return dto.FollowsId.Contains(authorId);
         }
 
         var following = await _authorRepository.isFollowing(User.Identity.Name, authorId);
@@ -95,7 +102,7 @@ public class PublicModel : PageModel
         }
         return RedirectToPage("/Public", new { page = CurrentPage });
     }
-    
+     
     [BindProperty]
     public string Message { get; set; } = string.Empty;
     
