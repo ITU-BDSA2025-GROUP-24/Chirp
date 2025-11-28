@@ -1,0 +1,64 @@
+﻿@page "/user-info" 
+@model Chirp.Web.Pages.UserInformation
+
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+
+<div>
+    <h2> User Information </h2>
+    <p>
+        Name: @Model.Username 
+        <br/>
+        Email: @Model.Email
+    </p>  
+    
+    <div>
+        <h3>Following</h3>
+        @if (Model.Following.Any())
+        {
+            <ul>
+                @foreach (var followedUser in Model.Following)
+                {
+                    <li><a href="/@followedUser">@followedUser</a></li>
+                }
+            </ul>
+        }
+        else
+        {
+            <em>Not following anyone yet</em>
+        }
+    </div>
+    <div>
+        <h2> Your Cheeps </h2>
+        @if (Model.Cheeps.Any())
+        {
+            <ul id="messagelist" class="cheeps">
+                @foreach (var cheep in Model.Cheeps)
+                {
+                    <li>
+                        <p>
+                            <strong>
+                                <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
+                            </strong>
+                            @cheep.Cheep
+                            <small>&mdash; @cheep.TimeStamp</small>
+                        </p>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <em>There are no cheeps so far.</em>
+        }
+    </div>
+</div>

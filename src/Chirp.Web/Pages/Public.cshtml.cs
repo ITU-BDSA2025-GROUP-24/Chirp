@@ -17,6 +17,7 @@ public class PublicModel : PageModel
 
     public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
 
+
     public IEnumerable<Guid> Followings { get; set; } = Enumerable.Empty<Guid>();
 
     public AddCheepModel AddCheepModel { get; set; }

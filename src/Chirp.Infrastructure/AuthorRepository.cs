@@ -54,6 +54,19 @@ public class AuthorRepository : IAuthorRepository
 
         return mail.ToAuthorDTO();
     }
+
+    public async Task<AuthorDTO> GetAuthorById(Guid id)
+    {
+        var authorId = await _dbContext.Authors.FirstOrDefaultAsync(c => c.AuthorId == id);
+
+        if (authorId == null)
+        {
+            throw new UserNotFound($"The author {authorId} does not exist.");
+        }
+
+        return authorId.ToAuthorDTO(); 
+
+    }
     
     public async Task<AuthorDTO> AddFollowAsync(string authorName, Guid followId)
     {
