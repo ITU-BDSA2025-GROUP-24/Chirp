@@ -123,5 +123,37 @@ public class AuthorRepositoryTests
         await Assert.ThrowsAsync<UserNotFound>(() => repo.GetAuthorByEmail("NonExistent"));
     }
     
-    
+    [Fact]
+    public async Task FollowUser()
+    {
+        //Arrange
+        var dbContext = GetInMemoryDbContext();
+        var repo = new AuthorRepository(dbContext);
+        await repo.CreateNewAuthor("Tester1", "Tester1@example.com");
+        await repo.CreateNewAuthor("Tester2", "Tester2@example.com");
+        AuthorDTO author1 = await repo.GetAuthorByName("Tester1");
+        AuthorDTO author2 = await repo.GetAuthorByName("Tester2");
+        //Act
+        await repo.AddFollowAsync(author1.Name, author2.AuthorId);
+        var assert = author1.FollowsId[0];
+        //Assert
+        Assert.Equal(author2.AuthorId, assert);
+    }
+    [Fact]
+    public async Task UnFollowUser()
+    {
+        //Arrange
+        var dbContext = GetInMemoryDbContext();
+        var repo = new AuthorRepository(dbContext);
+        await repo.CreateNewAuthor("Tester1", "Tester1@example.com");
+        await repo.CreateNewAuthor("Tester2", "Tester2@example.com");
+        AuthorDTO author1 = await repo.GetAuthorByName("Tester1");
+        AuthorDTO author2 = await repo.GetAuthorByName("Tester2");
+        //Act
+        await repo.AddFollowAsync(author1.Name, author2.AuthorId);
+        await repo.UnFollowAsync(author1.Name, author2.AuthorId);
+        var assert = author1.FollowsId;
+        //Assert
+        Assert.Empty(assert);
+    }
 }
