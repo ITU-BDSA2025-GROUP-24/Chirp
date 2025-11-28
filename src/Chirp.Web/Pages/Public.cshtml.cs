@@ -40,8 +40,7 @@ public class PublicModel : PageModel
         {
             Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
         }
-
-        Console.WriteLine($"Page={CurrentPage}");
+        
         return Page();
     }
     
@@ -49,7 +48,7 @@ public class PublicModel : PageModel
     {
         if (User.Identity == null || User.Identity.Name == null)
         {
-            Console.WriteLine("User.Identity is null");
+
             return;
         }
 
@@ -58,7 +57,7 @@ public class PublicModel : PageModel
 
         if (!await _authorRepository.UserExists(username, email))
         {
-            Console.WriteLine($"User {username} does not exist - creating.");
+ 
             await _authorRepository.CreateNewAuthor(username, email);
         }
 
@@ -83,7 +82,6 @@ public class PublicModel : PageModel
     
     public async Task<IActionResult> OnPostFollowAsync(Guid id, int page)
     {
-        Console.WriteLine($"OnPostFollowAsync HIT: id={id}, page={page}");
 
         if (!(User.Identity?.IsAuthenticated ?? false))
         {
@@ -95,15 +93,13 @@ public class PublicModel : PageModel
         if (await isFollowing(id))
         {
             await _authorRepository.UnFollowAsync(User.Identity!.Name!, id);
-            Console.WriteLine("Unfollowed");
+
         }
         else
         {
             await _authorRepository.AddFollowAsync(User.Identity!.Name!, id);
-            Console.WriteLine("Followed");
-        }
 
-        Console.WriteLine("REDIRECTING TO GET with page=" + CurrentPage);
+        }
         return RedirectToPage("/Public", new { page = CurrentPage });
     }
      
