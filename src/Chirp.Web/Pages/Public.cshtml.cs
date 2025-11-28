@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Chirp.Core;
+using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,8 +12,11 @@ public class PublicModel : PageModel
     private readonly IAuthorRepository _authorRepository;
 
     public int CurrentPage { get; private set; } = 1;
+    
+    private AuthorDTO dto;
 
-   public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
+    public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
+
 
     public IEnumerable<Guid> Followings { get; set; } = Enumerable.Empty<Guid>();
 
@@ -24,7 +28,7 @@ public class PublicModel : PageModel
         _authorRepository = authorRepository;
         AddCheepModel = new AddCheepModel(repository);
     }
-
+ 
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
     {
         CurrentPage = page < 1 ? 1 : page;
@@ -37,8 +41,7 @@ public class PublicModel : PageModel
         {
             Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
         }
-
-        Console.WriteLine($"Page={CurrentPage}");
+        
         return Page();
     }
     
@@ -46,7 +49,7 @@ public class PublicModel : PageModel
     {
         if (User.Identity == null || User.Identity.Name == null)
         {
-            Console.WriteLine("User.Identity is null");
+
             return;
         }
 
@@ -55,12 +58,11 @@ public class PublicModel : PageModel
 
         if (!await _authorRepository.UserExists(username, email))
         {
-            Console.WriteLine($"User {username} does not exist - creating.");
+ 
             await _authorRepository.CreateNewAuthor(username, email);
         }
 
-        var dto = await _authorRepository.GetAuthorByName(username);
-        Console.WriteLine($"User {username} exists with id {dto.AuthorId}");
+        dto = await _authorRepository.GetAuthorByName(username);
     }
     
     public async Task<bool> isFollowing(Guid authorId)
@@ -70,14 +72,17 @@ public class PublicModel : PageModel
             return false;
         }
 
+        if (dto != null)
+        {
+            return dto.FollowsId.Contains(authorId);
+        }
+
         var following = await _authorRepository.isFollowing(User.Identity.Name, authorId);
-        Console.WriteLine($"{User.Identity.Name} following {authorId}: {following}");
         return following;
     }
     
     public async Task<IActionResult> OnPostFollowAsync(Guid id, int page)
     {
-        Console.WriteLine($"OnPostFollowAsync HIT: id={id}, page={page}");
 
         if (!(User.Identity?.IsAuthenticated ?? false))
         {
@@ -89,18 +94,16 @@ public class PublicModel : PageModel
         if (await isFollowing(id))
         {
             await _authorRepository.UnFollowAsync(User.Identity!.Name!, id);
-            Console.WriteLine("Unfollowed");
+
         }
         else
         {
             await _authorRepository.AddFollowAsync(User.Identity!.Name!, id);
-            Console.WriteLine("Followed");
-        }
 
-        Console.WriteLine("REDIRECTING TO GET with page=" + CurrentPage);
+        }
         return RedirectToPage("/Public", new { page = CurrentPage });
     }
-    
+     
     [BindProperty]
     public string Message { get; set; } = string.Empty;
     

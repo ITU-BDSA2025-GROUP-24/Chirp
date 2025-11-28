@@ -81,8 +81,7 @@ public class AuthorRepository : IAuthorRepository
             author.FollowsId.Add(followId);
             await _dbContext.SaveChangesAsync();
         }
-
-        Console.WriteLine($"Added follow from {author.Name} to {followId}");
+        
         return author.ToAuthorDTO();
     }
 

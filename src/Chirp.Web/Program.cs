@@ -13,7 +13,7 @@ if (builder.Environment.IsDevelopment())
 {
     // For development, use local SQLite database
     var tempDirectory = Path.GetTempPath();
-    connection = $"Data Source={Path.Join(tempDirectory, "Chat.db")}";
+    connection = $"Data Source={Path.Join(tempDirectory, "Chirp.db")}";
 }
 else
 {
@@ -24,7 +24,7 @@ else
     if (string.IsNullOrEmpty(connection))
     {
         var tempDirectory = Path.GetTempPath();
-        connection = $"Data Source={Path.Join(tempDirectory, "Chat.db")}";
+        connection = $"Data Source={Path.Join(tempDirectory, "Chirp.db")}";
     }
 }
 

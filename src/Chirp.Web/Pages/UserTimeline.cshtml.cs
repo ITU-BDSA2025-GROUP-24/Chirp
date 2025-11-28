@@ -39,7 +39,7 @@ public class UserTimelineModel : PageModel
 
             cheepsForPage = await _repository.ReadCheepForAuthors(page, followingIds);
         }
-        else
+        else 
         {
             // Visiting someone else's profile → only their cheeps
             cheepsForPage = await _repository.ReadCheep(page, profileAuthor.Name);
