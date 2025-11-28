@@ -40,7 +40,9 @@
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="page" value="@Model.CurrentPage" />
                             <button type="submit" id="FollowBtn">
-                                @(await Model.isFollowing(cheep.Author.AuthorId) ? "Unfollow" : "Follow")
+                                @(Model.Followings.Contains(cheep.Author.AuthorId) 
+                                    ? "Unfollow" 
+                                    : "Follow")
                             </button>
                         </form>
 
