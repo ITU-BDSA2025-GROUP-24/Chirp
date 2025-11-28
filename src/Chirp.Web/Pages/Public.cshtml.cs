@@ -31,7 +31,7 @@ public class PublicModel : PageModel
         _authorRepository = authorRepository;
         AddCheepModel = new AddCheepModel(repository);
     }
-
+ 
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
     {
         CurrentPage = page < 1 ? 1 : page;
