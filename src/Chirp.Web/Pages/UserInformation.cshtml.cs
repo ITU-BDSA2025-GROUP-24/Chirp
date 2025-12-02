@@ -24,7 +24,7 @@ public class UserInformation : PageModel
         Email = "[No email]";
     }
 
-    public async Task CreateUserInfo(string? author)
+    public async Task CreateUserInfo(string author)
     {
         if (author == null)
         {

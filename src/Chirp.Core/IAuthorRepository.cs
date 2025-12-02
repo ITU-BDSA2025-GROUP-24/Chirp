@@ -17,4 +17,6 @@ public interface IAuthorRepository
     Task<AuthorDTO> UnFollowAsync(String AuthorName, Guid FollowerId);
 
     Task<List<Guid>> ReturnFollowing(String AuthorName);
+    Task DeleteAuthor(string name);
 }
+
