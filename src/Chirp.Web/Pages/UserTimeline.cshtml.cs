@@ -13,8 +13,13 @@ public class UserTimelineModel : PageModel
     private readonly IAuthorRepository _authorRepository;
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
     public bool DoesUserExist { get; set; } 
-    public string AuthorName { get; set; } //Used in UserTimeline.cshtml if author does not exist
-
+    
+    /*
+    Used in UserTimeline.cshtml if author does not exist,
+    since cheep.Author.Name will not work if the user does not exist.
+    */
+    public string AuthorName { get; set; }
+    
     public UserTimelineModel(ICheepRepository repository, IAuthorRepository authorRepository)
     {
         _repository = repository;
