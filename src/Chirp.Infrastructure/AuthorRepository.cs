@@ -54,6 +54,19 @@ public class AuthorRepository : IAuthorRepository
 
         return mail.ToAuthorDTO();
     }
+
+    public async Task<AuthorDTO> GetAuthorById(Guid id)
+    {
+        var authorId = await _dbContext.Authors.FirstOrDefaultAsync(c => c.AuthorId == id);
+
+        if (authorId == null)
+        {
+            throw new UserNotFound($"The author {authorId} does not exist.");
+        }
+
+        return authorId.ToAuthorDTO(); 
+
+    }
     
     public async Task<AuthorDTO> AddFollowAsync(string authorName, Guid followId)
     {
@@ -68,8 +81,7 @@ public class AuthorRepository : IAuthorRepository
             author.FollowsId.Add(followId);
             await _dbContext.SaveChangesAsync();
         }
-
-        Console.WriteLine($"Added follow from {author.Name} to {followId}");
+        
         return author.ToAuthorDTO();
     }
 
@@ -106,6 +118,38 @@ public class AuthorRepository : IAuthorRepository
 
         return author.ToAuthorDTO();
     }
+
+    public async Task DeleteAuthor(string name)
+
+    {
+        var author = await _dbContext.Authors.Include(a => a.Cheeps).FirstOrDefaultAsync(a => a.Name == name);
+        
+        if (author == null)
+        {
+            throw new UserNotFound($"The user {name} does not exist.");
+        }
+        
+        //Get authorId of author who wants to be deleted
+        var authorId = author.AuthorId;
+        
+        //Get author ID in order to remove them from other users following lists
+        var followingThisAuthor = await _dbContext.Authors.Where(a => a.FollowsId.Contains(authorId)).ToListAsync();
+
+        foreach (var follows in followingThisAuthor)
+        {
+            follows.FollowsId.Remove(authorId);
+        }
+        
+        //Delete all cheeps from author
+        _dbContext.Cheeps.RemoveRange(author.Cheeps);
+        
+        //Delete author
+        _dbContext.Authors.Remove(author);
+        
+        await _dbContext.SaveChangesAsync();
+        
+    }
+    
 }
 
 

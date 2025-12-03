@@ -21,4 +21,10 @@
         <ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="Chirp.db">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>

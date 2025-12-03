@@ -8,6 +8,7 @@ public interface IAuthorRepository
     Task CreateNewAuthor(string name, string email);
     Task <AuthorDTO> GetAuthorByName (string name);
     Task <AuthorDTO> GetAuthorByEmail (string email);
+    Task <AuthorDTO> GetAuthorById(Guid authorId);
 
     Task<AuthorDTO> AddFollowAsync(String AuthorName, Guid FollowerId);
 
@@ -16,4 +17,6 @@ public interface IAuthorRepository
     Task<AuthorDTO> UnFollowAsync(String AuthorName, Guid FollowerId);
 
     Task<List<Guid>> ReturnFollowing(String AuthorName);
+    Task DeleteAuthor(string name);
 }
+

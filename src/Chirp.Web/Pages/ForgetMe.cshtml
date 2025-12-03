@@ -1,0 +1,29 @@
+﻿@page
+@model Chirp.Web.Pages.ForgetMe
+
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout"; 
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<div>
+    <h2> Forget Me </h2>
+    <p>
+        Are you sure? This action cannot be undone.
+    </p>
+    
+    <form method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit"> Yes, delete my account </button>
+            <button onclick="window.location='/user-info'"> No </button>
+        </form>
+</div>
+</body>
+</html>
