@@ -51,7 +51,7 @@ public class CheepRepository : ICheepRepository
     
     public async Task<IEnumerable<CheepDTO>> ReadCheepForAuthors(int pageNum, IEnumerable<Guid> authorIds)
     {
-        const int pageSize = 32; // or whatever you use
+        const int pageSize = 32; 
         var ids = authorIds.ToList();
         if (!ids.Any())
             return Enumerable.Empty<CheepDTO>();
