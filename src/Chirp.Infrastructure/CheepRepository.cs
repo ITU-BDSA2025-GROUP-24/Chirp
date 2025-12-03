@@ -91,5 +91,26 @@ public class CheepRepository : ICheepRepository
         _dbContext.Cheeps.Add(newCheep);
         await _dbContext.SaveChangesAsync();
     }
+
     
+    public async Task DeleteCheep(Guid cheepId, string username)
+    {
+        var cheep = await _dbContext.Cheeps
+            .Include(c => c.Author)
+            .FirstOrDefaultAsync(c => c.CheepId == cheepId);
+    
+        if (cheep == null)
+        {
+            throw new InvalidOperationException($"Cheep with ID {cheepId} does not exist.");
+        }
+        
+        //Check if it is the user's cheep
+        if (cheep.Author.Name != username)
+        {
+            throw new InvalidOperationException("You can only delete your own cheeps!");
+        }
+    
+        _dbContext.Cheeps.Remove(cheep);
+        await _dbContext.SaveChangesAsync();
+    }
 }

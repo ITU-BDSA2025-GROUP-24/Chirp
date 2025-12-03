@@ -7,4 +7,6 @@ public interface ICheepRepository
     public Task<List<CheepDTO>> ReadCheep(int pageNum = 1, string? author = null);
     
     Task<IEnumerable<CheepDTO>> ReadCheepForAuthors(int pageNum, IEnumerable<Guid> authorIds);
+    
+    public Task DeleteCheep(Guid cheepId, string username);
 }
