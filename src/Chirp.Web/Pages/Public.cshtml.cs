@@ -12,7 +12,7 @@ public class PublicModel : PageModel
     private readonly IAuthorRepository _authorRepository;
 
     public int CurrentPage { get; private set; } = 1;
-    
+
     private AuthorDTO dto;
 
     public IEnumerable<CheepDTO> Cheeps { get; set; } = Enumerable.Empty<CheepDTO>();
@@ -28,7 +28,7 @@ public class PublicModel : PageModel
         _authorRepository = authorRepository;
         AddCheepModel = new AddCheepModel(repository);
     }
- 
+
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
     {
         CurrentPage = page < 1 ? 1 : page;
@@ -41,10 +41,10 @@ public class PublicModel : PageModel
         {
             Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
         }
-        
+
         return Page();
     }
-    
+
     private async Task IdentityCheck()
     {
         if (User.Identity == null || User.Identity.Name == null)
@@ -58,13 +58,13 @@ public class PublicModel : PageModel
 
         if (!await _authorRepository.UserExists(username, email))
         {
- 
+
             await _authorRepository.CreateNewAuthor(username, email);
         }
 
         dto = await _authorRepository.GetAuthorByName(username);
     }
-    
+
     public async Task<bool> isFollowing(Guid authorId)
     {
         if (User.Identity == null || User.Identity.Name == null)
@@ -80,7 +80,7 @@ public class PublicModel : PageModel
         var following = await _authorRepository.isFollowing(User.Identity.Name, authorId);
         return following;
     }
-    
+
     public async Task<IActionResult> OnPostFollowAsync(Guid id, int page)
     {
 
@@ -101,12 +101,12 @@ public class PublicModel : PageModel
             await _authorRepository.AddFollowAsync(User.Identity!.Name!, id);
 
         }
+
         return RedirectToPage("/Public", new { page = CurrentPage });
     }
-     
-    [BindProperty]
-    public string Message { get; set; } = string.Empty;
-    
+
+    [BindProperty] public string Message { get; set; } = string.Empty;
+
     public async Task<IActionResult> OnPostAsync(int page)
     {
         CurrentPage = page < 1 ? 1 : page;
@@ -141,9 +141,10 @@ public class PublicModel : PageModel
             {
                 Followings = await _authorRepository.ReturnFollowing(User.Identity.Name);
             }
+
             return Page();
         }
-        
+
         return RedirectToPage("/Public", new { page = CurrentPage });
     }
 }
