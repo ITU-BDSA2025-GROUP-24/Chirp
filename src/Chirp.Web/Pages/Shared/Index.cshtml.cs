@@ -6,7 +6,6 @@ namespace Chirp.Web.Pages.Shared;
 
 public class IndexViewComponent : ViewComponent
 {
-    //Cache stored in the web server memory
     private IMemoryCache _cache;
     private IAuthorRepository _authorRepository;
     public IndexViewComponent(IMemoryCache cache, IAuthorRepository authorRepository)
@@ -22,8 +21,7 @@ public class IndexViewComponent : ViewComponent
             return View(); 
         }
         
-        //Check if the user already exists, yes? Do not create it again 
-        bool doesUsernameExist = await _authorRepository.UserExists(User.Identity.Name, User.Identity.Name + "@chirp.com");
+        bool doesUsernameExist = await _authorRepository.UserExists(User.Identity.Name);
         if (!doesUsernameExist)
         {
             await _authorRepository.CreateNewAuthor(User.Identity.Name, User.Identity.Name + "@chirp.com");
