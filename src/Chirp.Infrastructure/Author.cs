@@ -8,4 +8,5 @@ public class Author
     public string? Email { get; set; }
     public ICollection<Cheep> Cheeps { get; set; } = new List<Cheep>();
     public List<Guid> FollowsId { get; set; } =  new List<Guid>();
+    public string? ProfileImageUrl { get; set; }
 } 

@@ -45,7 +45,7 @@ public class AuthorRepositoryTests
         var repo = new AuthorRepository(dbContext);
 
         //Act
-        var exists = await repo.UserExists("Tester", "test@example.com");
+        var exists = await repo.UserExists("Tester");
 
         //Assert
         Assert.True(exists);
@@ -59,7 +59,7 @@ public class AuthorRepositoryTests
         var repo = new AuthorRepository(dbContext);
 
         //Act
-        var exists = await repo.UserExists("Tester", "tester@example.com");
+        var exists = await repo.UserExists("Tester");
 
         //Assert
         Assert.False(exists);

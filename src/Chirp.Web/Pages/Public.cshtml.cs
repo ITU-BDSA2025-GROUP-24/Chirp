@@ -56,7 +56,7 @@ public class PublicModel : PageModel
         var username = User.Identity.Name;
         var email = username + "@chirp.com";
 
-        if (!await _authorRepository.UserExists(username, email))
+        if (!await _authorRepository.UserExists(username))
         {
 
             await _authorRepository.CreateNewAuthor(username, email);

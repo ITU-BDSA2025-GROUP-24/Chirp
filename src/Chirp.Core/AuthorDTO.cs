@@ -8,4 +8,6 @@ public class AuthorDTO
     public required string Email { get; set; }
     
     public List<Guid> FollowsId { get; set; } =  new List<Guid>();
+    
+    public string? ProfileImageUrl { get; set; }
 }
