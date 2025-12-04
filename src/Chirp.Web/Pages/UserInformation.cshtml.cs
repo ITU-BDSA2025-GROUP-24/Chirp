@@ -29,7 +29,7 @@ public class UserInformation : PageModel
     
    
     [BindProperty] 
-    public IFormFile? Upload { get; set; }
+    public IFormFile Upload { get; set; }
     
     public async Task CreateUserInfo(string author)
     {
