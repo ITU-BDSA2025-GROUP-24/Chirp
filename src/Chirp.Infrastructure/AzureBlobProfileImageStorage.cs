@@ -4,11 +4,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace Chirp.Infrastructure;
 
-public interface IProfileImageStorage
-{
-    Task<string> UploadProfileImageAsync(Stream imageStream, string contentType, string fileName);
-}
-
 public class AzureBlobProfileImageStorage : IProfileImageStorage
 {
     private readonly BlobContainerClient _container;
