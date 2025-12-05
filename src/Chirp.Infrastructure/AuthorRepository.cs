@@ -12,7 +12,7 @@ public class AuthorRepository : IAuthorRepository
         this._dbContext = _dbContext;
     }
 
-    public async Task<bool> UserExists(string name, string email)
+    public async Task<bool> UserExists(string name)
     {
         var author = await _dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name);
         return author != null;
@@ -20,7 +20,7 @@ public class AuthorRepository : IAuthorRepository
     
     public async Task CreateNewAuthor(string name, string email)
     {
-        bool userExists = await UserExists(name, email);
+        bool userExists = await UserExists(name);
         if (userExists)
         {
             throw new Exception("User already exists.");
@@ -70,12 +70,10 @@ public class AuthorRepository : IAuthorRepository
     
     public async Task<AuthorDTO> AddFollowAsync(string authorName, Guid followId)
     {
-        // Load the EF entity
         var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
         if (author == null)
             throw new UserNotFound($"The user {authorName} does not exist.");
-
-        // Avoid duplicates
+        
         if (!author.FollowsId.Contains(followId))
         {
             author.FollowsId.Add(followId);
@@ -99,8 +97,7 @@ public class AuthorRepository : IAuthorRepository
         var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
         if (author == null)
             throw new UserNotFound($"The user {authorName} does not exist.");
-
-        // Return a copy so callers can’t accidentally mutate EF’s tracked collection
+        
         return author.FollowsId.ToList();
     }
 
@@ -129,10 +126,8 @@ public class AuthorRepository : IAuthorRepository
             throw new UserNotFound($"The user {name} does not exist.");
         }
         
-        //Get authorId of author who wants to be deleted
         var authorId = author.AuthorId;
         
-        //Get author ID in order to remove them from other users following lists
         var followingThisAuthor = await _dbContext.Authors.Where(a => a.FollowsId.Contains(authorId)).ToListAsync();
 
         foreach (var follows in followingThisAuthor)
@@ -140,16 +135,25 @@ public class AuthorRepository : IAuthorRepository
             follows.FollowsId.Remove(authorId);
         }
         
-        //Delete all cheeps from author
         _dbContext.Cheeps.RemoveRange(author.Cheeps);
         
-        //Delete author
         _dbContext.Authors.Remove(author);
         
         await _dbContext.SaveChangesAsync();
         
     }
-    
+    public async Task UpdateAsync(AuthorDTO authorDto)
+    {
+        var author = await _dbContext.Authors
+            .FirstOrDefaultAsync(a => a.AuthorId == authorDto.AuthorId);
+
+        if (author is null)
+            throw new InvalidOperationException($"Author with id '{authorDto.AuthorId}' not found.");
+        
+        author.ProfileImageUrl = authorDto.ProfileImageUrl;
+
+        await _dbContext.SaveChangesAsync();
+    }
 }
 
 

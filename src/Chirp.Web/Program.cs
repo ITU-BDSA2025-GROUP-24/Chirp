@@ -27,7 +27,8 @@ else
         connection = $"Data Source={Path.Join(tempDirectory, "Chirp.db")}";
     }
 }
-
+var connectionString = builder.Configuration["AzureStorage:ConnectionString"];
+var containerName    = builder.Configuration["AzureStorage:ProfileImagesContainer"];
 // Configures ChirpDBContext with database connection.
 builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connection));
 
@@ -68,6 +69,7 @@ builder.Services.AddAuthentication(options =>
 
 // Configure Razor Pages
 builder.Services.AddRazorPages();
+builder.Services.AddControllers(); 
 
 // Configure antiforgery to work with HTTP in development
 builder.Services.AddAntiforgery(options =>
@@ -78,6 +80,7 @@ builder.Services.AddAntiforgery(options =>
     }
 });
 
+builder.Services.AddSingleton<IProfileImageStorage, AzureBlobProfileImageStorage>();
 builder.Services.AddSession();
 
 var app = builder.Build();
@@ -119,6 +122,7 @@ app.UseAuthorization();
 app.UseSession();
 
 // Map endpoints
+app.MapControllers();
 app.MapRazorPages();
 
 // API endpoints for login/logout

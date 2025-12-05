@@ -9,21 +9,28 @@ public class UserInformation : PageModel
 {
     public readonly IAuthorRepository _authorRepo; 
     public readonly ICheepRepository _cheepRepo;
-    public required IEnumerable<CheepDTO> Cheeps { get; set; }
-    public required AuthorDTO Author { get; set; }
-    public required string Username { get; set; }
-    public required string Email { get; set; }
+    private readonly IProfileImageStorage _imageStorage;
+    public IEnumerable<CheepDTO> Cheeps { get; set; }
+    public AuthorDTO Author { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public string ProfileImageUrl { get; set; }
     public List<string> Following { get; set; } = new List<string>();
    
     
-    public UserInformation(IAuthorRepository authorRepo, ICheepRepository cheepRepo)
+    public UserInformation(IAuthorRepository authorRepo, ICheepRepository cheepRepo,IProfileImageStorage imageStorage)
     {
         _authorRepo = authorRepo;
         _cheepRepo = cheepRepo;
+        _imageStorage = imageStorage;
         Username = "[No username]";
         Email = "[No email]";
     }
-
+    
+   
+    [BindProperty] 
+    public IFormFile Upload { get; set; }
+    
     public async Task CreateUserInfo(string author)
     {
         if (author == null)
@@ -33,11 +40,12 @@ public class UserInformation : PageModel
 
         Author = await _authorRepo.GetAuthorByName(author);
         Username = Author.Name;
+        ProfileImageUrl = Author.ProfileImageUrl;
+        Console.WriteLine($"[CreateUserInfo] Loaded ProfileImageUrl: {ProfileImageUrl}");
 
         Console.WriteLine($"Registered username: {Username}");
 
-
-        //Set user email if registered author email is not null/exists (Should always be true...)
+        
         if (Author.Email != null && !Email.Equals(""))
         {
             Email = Author.Email;
@@ -58,19 +66,39 @@ public class UserInformation : PageModel
 
         try
         {
-            // Call CreateUserInfo to initialize user data
             await CreateUserInfo(User.Identity.Name);
             
-            // Get cheeps for this user
             Cheeps = await _cheepRepo.ReadCheep(page, User.Identity.Name);
         }
         catch (UserNotFound)
         {
-            // If user doesn't exist, redirect to public timeline
             return RedirectToPage("/Public");
         }
 
         return Page();
+    }
+    
+    public async Task<IActionResult> OnPostAsync()
+    {
+        Console.WriteLine($"[OnPost] Upload null? {Upload is null}, length: {Upload?.Length ?? 0}");
+
+        if (!User.Identity?.IsAuthenticated ?? true)
+            return Challenge();
+
+        if (Upload is null || Upload.Length == 0)
+            return RedirectToPage();
+
+        var author = await _authorRepo.GetAuthorByName(User.Identity!.Name!);
+
+        var imageUrl = await _imageStorage.UploadProfileImageAsync(
+            Upload.OpenReadStream(),
+            Upload.ContentType,
+            Upload.FileName);
+
+        author.ProfileImageUrl = imageUrl;
+        await _authorRepo.UpdateAsync(author);
+
+        return RedirectToPage();
     }
     
     
