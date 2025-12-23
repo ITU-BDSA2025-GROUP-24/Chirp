@@ -41,7 +41,7 @@ public class AuthorRepositoryTest1 : TestBase
         await repo.CreateNewAuthor("Tester", "test@example.com");
 
         // Act + Assert
-        await Assert.ThrowsAsync<Exception>(() =>
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
             repo.CreateNewAuthor("Tester", "test@example.com"));
     }
     
