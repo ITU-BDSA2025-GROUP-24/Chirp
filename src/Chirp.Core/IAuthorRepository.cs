@@ -1,7 +1,6 @@
 namespace Chirp.Core;
 
-public record AuthorInfo(string User, string Email);
-
+//Interface - Everything below must be implemented in AuthorRepository.
 public interface IAuthorRepository
 {
     Task <Boolean> UserExists(string name);

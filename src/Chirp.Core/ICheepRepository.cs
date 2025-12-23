@@ -1,5 +1,6 @@
 ﻿namespace Chirp.Core;
 
+//Interface - Everything below must be implemented in CheepRepository
 public interface ICheepRepository
 {
     public Task CreateCheep(string username, string email, string cheep);
