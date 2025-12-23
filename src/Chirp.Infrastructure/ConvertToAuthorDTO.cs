@@ -3,11 +3,14 @@ using Chirp.Core;
 
 namespace Chirp.Infrastructure;
 
+
+// Converts author entities to AuthorDTOs 
 public static class ConvertToAuthorDTO
 {
     public static AuthorDTO ToAuthorDTO(this Author author)
     {
         string _Email;
+        //If the author has no email, generate a default one using their name
         if (author.Email == null)
         {
             _Email = author.Name + "@chirp.com";
@@ -16,6 +19,8 @@ public static class ConvertToAuthorDTO
         {
             _Email = author.Email;
         }
+        
+        //Create and populate the AuthorDTO with author data
         var authorDTO = new AuthorDTO()
         {
             Name = author.Name,
