@@ -1,27 +1,37 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Chirp.Core;
-using Chirp.Infrastructure;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Chirp.Infrastructure;
 
+// Repository class that handles data access operations for Cheep entities
+// Implements the ICheepRepository interface
 public class CheepRepository : ICheepRepository
 {
+    //Defines the number of cheeps to display per page to enable pagination
     private readonly int _pageLength = 32;
     
+    //Context used to interact with the database
     private readonly ChirpDBContext _dbContext;
    
+    /*
+    Initializes the repository with database context
+    dbContext: Context for accessing the database
+    skipMigrations: Flag to skip automatic migrations and seeding  
+    */
     public CheepRepository(ChirpDBContext dbContext, bool skipMigrations = false)
     {
         _dbContext = dbContext;
         
+        //Run migrations and seed data if skipMigrations is false
         if (!skipMigrations)
         {
             _dbContext.Database.Migrate();
+            //Seed database with data from DbInitializer 
             DbInitializer.SeedDatabase(_dbContext);
         }
     }
     
+    //Retrieves paginated list of cheeps from the database. List can be filtered by author. 
     public async Task<List<CheepDTO>> ReadCheep(int pageNum = 1, string? author = null)
     {
         int pageSize = pageNum - 1; 
