@@ -2,9 +2,10 @@
 
 namespace Chirp.Infrastructure;
 
+//Database entity that maps to our database table. 
 public class Cheep
 {
-    //Generates 128bit unique ID for cheep 
+    //Generates 128bit unique ID for cheep - Safer than using an int that increments each time a new ID is generated.
     [Required]
     public required Guid CheepId { get; set; }
     [Required]
