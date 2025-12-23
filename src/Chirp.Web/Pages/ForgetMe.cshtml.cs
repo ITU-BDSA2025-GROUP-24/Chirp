@@ -26,6 +26,9 @@ public class ForgetMe : PageModel
         return Page();
     }
     
+    /*
+    Handles POST requests for deleing an user's account. 
+    */
     public async Task<IActionResult> OnPostAsync()
     {
         if (User.Identity == null || !User.Identity.IsAuthenticated)
@@ -34,21 +37,14 @@ public class ForgetMe : PageModel
         }
 
         var authorName = User.Identity.Name;
-
-        try
-        {
-            //Delete author/user from database 
-            await _authorRepo.DeleteAuthor(authorName);
-
-            //Sign user out
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        }
-        catch (UserNotFound)
-        {
-            //User not exist? Sign them out (They still have a valid authentication cookie/session they must be signed out from)
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        }
         
+        //Delete author/user from database 
+        await _authorRepo.DeleteAuthor(authorName);
+
+        //Sign user out
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        //Redirect to public timeline
         return RedirectToPage("/Public");
     }
 }
