@@ -60,6 +60,7 @@ public class UserInformation : PageModel
         }
     }
 
+    //Handles GET requests for displaying the user information page
     public async Task<IActionResult> OnGet(string author, int i = 1)
     {
         var page = i < 1 ? 1 : i;
@@ -78,6 +79,7 @@ public class UserInformation : PageModel
         return Page();
     }
     
+    //Handles POST requests for uploading a new profile picture
     public async Task<IActionResult> OnPostAsync()
     {
         Console.WriteLine($"[OnPost] Upload null? {Upload is null}, length: {Upload?.Length ?? 0}");

@@ -29,6 +29,7 @@ public class PublicModel : PageModel
         AddCheepModel = new AddCheepModel(repository);
     }
 
+	//Handles GET requests for the public timeline
     public async Task<IActionResult> OnGetAsync([FromQuery(Name = "page")] int page = 1)
     {
         CurrentPage = page < 1 ? 1 : page;
@@ -45,6 +46,7 @@ public class PublicModel : PageModel
         return Page();
     }
 
+	//Checks if the authenticated user exists in the database, creates them if they do not. 
     private async Task IdentityCheck()
     {
         if (User.Identity == null || User.Identity.Name == null)
@@ -65,6 +67,7 @@ public class PublicModel : PageModel
         dto = await _authorRepository.GetAuthorByName(username);
     }
 
+	//Checks if the author is following a specific user
     public async Task<bool> isFollowing(Guid authorId)
     {
         if (User.Identity == null || User.Identity.Name == null)
@@ -81,6 +84,7 @@ public class PublicModel : PageModel
         return following;
     }
 
+	//Handles POST requests for following or unfolowing an author
     public async Task<IActionResult> OnPostFollowAsync(Guid id, int page)
     {
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Web.Pages;
 
+//Handels cheep deletion
 public class RemoveCheep : PageModel
 {
     private readonly ICheepRepository _cheepRepo;
@@ -18,6 +19,7 @@ public class RemoveCheep : PageModel
         return Page();
     }
     
+    //Handles POST requests for deleting a cheep
     public async Task<IActionResult> OnPostAsync(Guid cheepId, string returnUrl = "/")
     {
        if (!(User.Identity?.IsAuthenticated ?? false) || User.Identity.Name == null)
