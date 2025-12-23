@@ -5,25 +5,34 @@ namespace Chirp.Infrastructure;
 
 public class AuthorRepository(ChirpDBContext dbContext) : IAuthorRepository
 {
+    //Method used to check whether a user with the given name exists.
     public async Task<bool> UserExists(string name)
     {
         var author = await dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name);
         return author != null;
     }
     
+    /*
+    Creates new author. First it checks whether the author already exists. 
+    If so, it throws an exception to avoid duplicates.
+    */
     public async Task CreateNewAuthor(string name, string email)
     {
-        bool userExists = await UserExists(name);
-        if (userExists)
+        //Does the user exist? Throw exception.
+        if (await UserExists(name))
         {
-            throw new Exception("User already exists.");
+            throw new InvalidOperationException("User already exists.");
         }
         
-        dbContext.Authors.Add(new Author {Name = name, Email = email, Cheeps = new List<Cheep>(), AuthorId = Guid.NewGuid()});
+        //Otherwise create a new author, and save the changes to the database
+        dbContext.Authors.Add(new Author {Name = name, Email = email, AuthorId = Guid.NewGuid()});
         await dbContext.SaveChangesAsync();
     }
     
-    
+    /*
+     Gets an author by username. Throws exception if author not found. 
+     Returns an AuthorDTO.
+    */
    public async Task<AuthorDTO> GetAuthorByName(string name)
     {
         var author = await dbContext.Authors.FirstOrDefaultAsync(c => c.Name == name);
@@ -32,10 +41,14 @@ public class AuthorRepository(ChirpDBContext dbContext) : IAuthorRepository
         {
             throw new UserNotFound($"The user {name} does not exist.");
         }
-
+        //Converts the author entity to an AuthorDTO
         return author.ToAuthorDTO();
     }
     
+   /*
+    Gets author by email. Trows an UserNotFound exception if author is not found.
+    Returns an AuthorDTO. 
+   */
     public async Task<AuthorDTO> GetAuthorByEmail(string email)
     {
         var mail = await dbContext.Authors.FirstOrDefaultAsync(c => c.Email == email);
@@ -44,7 +57,7 @@ public class AuthorRepository(ChirpDBContext dbContext) : IAuthorRepository
         {
             throw new UserNotFound($"The email {email} does not exist.");
         }
-
+        //Converts the email entity to an AuthorDTO
         return mail.ToAuthorDTO();
     }
 

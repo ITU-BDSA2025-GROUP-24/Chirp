@@ -22,7 +22,7 @@
     <form method="post">
             @Html.AntiForgeryToken()
             <button type="submit"> Yes, delete my account </button>
-            <button onclick="window.location='/user-info'"> No </button>
+            <button type="button" onclick="location.href='/user-info'">No</button>
         </form>
 </div>
 </body>
