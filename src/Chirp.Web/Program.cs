@@ -29,6 +29,7 @@ else
 }
 var connectionString = builder.Configuration["AzureStorage:ConnectionString"];
 var containerName    = builder.Configuration["AzureStorage:ProfileImagesContainer"];
+
 // Configures ChirpDBContext with database connection.
 builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connection));
 
