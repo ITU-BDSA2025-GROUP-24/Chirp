@@ -2,6 +2,8 @@
 
 namespace Chirp.Infrastructure;
 
+
+// Database context for managing Cheeps and Authors
 public class ChirpDBContext : DbContext
 {
     public DbSet<Cheep> Cheeps { get; set; }

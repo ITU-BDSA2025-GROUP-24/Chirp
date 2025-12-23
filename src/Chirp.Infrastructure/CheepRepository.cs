@@ -36,54 +36,74 @@ public class CheepRepository : ICheepRepository
     {
         int pageSize = pageNum - 1; 
         
+        //Query the database for cheeps with author filtering
         List<Cheep> cheeps = await 
             (
+                //If there are no author specified, query all cheeps
+                //Author specified? Filter cheeps by the specified author's name
                 author == null ? 
                 _dbContext.Cheeps :
                 _dbContext.Cheeps.Where(c => c.Author.Name == author)
             )
+            /*
+            Sort cheeps by timestamp - Descending order, so new cheeps are shown at the top of the page
+            Skip cheeps from previous pages, take cheeps defined by _pageLength, and execute query asynchronously.
+            Return as a list.
+            */
             .OrderByDescending(d => d.TimeStamp)
             .Skip(pageSize * _pageLength)
             .Take(_pageLength)
             .Include(c => c.Author)
             .ToListAsync();
-            
-       
+        
+        //Convert the list of cheep entities to CheepDTO objects
         var results = new List<CheepDTO>();
         foreach (Cheep cheep in cheeps)
         {
+            //Convert cheep entity to CheepDTO
             var result = cheep.ToCheepDTO();
            
+            //Add converted cheep to the result list
             results.Add(result); 
         }
         return results;
     }
     
+    //Gets a paginated list of cheeps from the database from specific authors
     public async Task<IEnumerable<CheepDTO>> ReadCheepForAuthors(int pageNum, IEnumerable<Guid> authorIds)
     {
         const int pageSize = 32; 
+        
+        //Convert authorIDs to a list 
         var ids = authorIds.ToList();
+        
+        //If no authorIds are provided, return an empty collection
         if (!ids.Any())
             return Enumerable.Empty<CheepDTO>();
 
+        //Build database query used to retrieve cheep from the specified authors, and sort them
         var query = _dbContext.Cheeps
             .Include(c => c.Author)
             .Where(c => ids.Contains(c.Author.AuthorId))
             .OrderByDescending(c => c.TimeStamp);
 
+        //Execute query with pagination
         var cheeps = await query
             .Skip((pageNum - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
+        //Convert cheep entities to CheepDTo objects
         return cheeps.Select(c => c.ToCheepDTO());
     }
 
-    
+    //Creates a new cheep
     public async Task CreateCheep(string username, string email, string cheep)
     {
+        //Find author in the database using the specified username
         Author? author =  await _dbContext.Authors.FirstOrDefaultAsync(a => a.Name == username);
         
+        //No author found? Throw exception
         if (author == null)
         {
             throw new UserNotFound("Author name cannot be null or empty");
@@ -99,10 +119,11 @@ public class CheepRepository : ICheepRepository
         };
 
         _dbContext.Cheeps.Add(newCheep);
+        //Save changes to the database
         await _dbContext.SaveChangesAsync();
     }
 
-    
+    //Delete cheep from database, after making sure it is the user's own cheep
     public async Task DeleteCheep(Guid cheepId, string username)
     {
         var cheep = await _dbContext.Cheeps

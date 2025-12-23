@@ -2,6 +2,7 @@
 
 namespace Chirp.Infrastructure;
 
+// Converts cheep entities to AuthorDTOs 
 public static class ConvertToCheepDTO
 {
     public static CheepDTO ToCheepDTO(this Cheep cheep)
