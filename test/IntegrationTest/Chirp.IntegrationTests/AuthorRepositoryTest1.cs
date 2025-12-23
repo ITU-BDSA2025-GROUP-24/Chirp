@@ -8,7 +8,7 @@ public class AuthorRepositoryTest1 : TestBase
 {
     
     [Fact]
-    public async Task Test1()
+    public async Task CreateNewAuthor_AddAuthorToDatabase()
     { 
         // Arrange
            var options = CreateInMemoryOptions();
@@ -29,7 +29,7 @@ public class AuthorRepositoryTest1 : TestBase
     }
     
     [Fact]
-    public async Task Test2()
+    public async Task CreateNewAuthor_WhenAuthorAlreadyExists_ShouldThrowException()
     {
         // Arrange
         var options = CreateInMemoryOptions();
@@ -46,7 +46,7 @@ public class AuthorRepositoryTest1 : TestBase
     }
     
     [Fact]
-    public async Task Test3()
+    public async Task GetAuthorByName_ShouldReturnCorrectAuthor()
     {
         // Arrange
         var options = CreateInMemoryOptions();
@@ -65,7 +65,7 @@ public class AuthorRepositoryTest1 : TestBase
     }
     
     [Fact]
-    public async Task Test4()
+    public async Task GetAuthorByName_NonexistentAuthor_ThrowsException()
     {
         //Arrange
         var options = CreateInMemoryOptions();
@@ -81,7 +81,7 @@ public class AuthorRepositoryTest1 : TestBase
     }
     
     [Fact]
-    public async Task Test5()
+    public async Task GetAuthorByEmail_ShouldReturnCorrectAuthor()
     {
         //Arrange
         var options = CreateInMemoryOptions();
