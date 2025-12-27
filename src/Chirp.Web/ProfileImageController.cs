@@ -27,6 +27,8 @@ public class ProfileImageController : Controller
         _container = new BlobContainerClient(connectionString, containerName);
     }
     
+    
+    //Fetches picture from azure blob container
     [HttpGet("{authorName}")]
     public async Task<IActionResult> Get(string authorName)
     {

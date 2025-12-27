@@ -13,7 +13,7 @@ public class IndexViewComponent : ViewComponent
         _cache = cache;
         _authorRepository = authorRepository;
         }
-
+//Creates new a new author for the user if they are not yet in the system.
     public async Task<IViewComponentResult> InvokeAsync()
     {
         if (User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
