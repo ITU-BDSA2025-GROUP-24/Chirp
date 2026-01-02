@@ -216,7 +216,7 @@ Next, set up a user secret containing a connection string using the
 following command:
 
 
-    dotnet user-secrets set "AzureStorage__ConnectionString" "[insert connection string]"
+    dotnet user-secrets set "AzureStorage:ConnectionString" "[insert connection string]"
 
 
 The placeholder [insert connection string] should be replaced with your Azure Storage connection string. For security reasons, the actual connection string has been shared with the course leader through a secure channel outside of GitHub.
