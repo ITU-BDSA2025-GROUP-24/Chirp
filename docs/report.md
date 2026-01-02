@@ -9,10 +9,9 @@ Authors:
   - Line Juul Kabbeltved Præstegaard          <ljni@itu.dk>
   - Phongchai Chou                            <phoc@itu.dk>
   - Radmehr Shafaat                           <rads@itu.dk>
-numbersections: true
 ---
 
-# Chirp Project Report
+# _Chirp!_ Project Report
 ## ITU BDSA 2025 GROUP 24
 ### Course title: Analysis, Design, and Software Architecture
 ### Course code: BSANDSA1KU
@@ -189,6 +188,30 @@ When the repository has been cloned, navigate to the
     cd Chirp/src/Chirp.Web
 
 
+
+Create GitHub OAuth Credentials, these are required for login: 
+
+Go to **GitHub** and navigate to **Settings**.
+
+From there go to **Developer Settings** and choose **OAuth Apps**. 
+
+Click **New OAuth App**.
+
+Fill in: 
+- Application name: ChirpGroup24
+- Homepage URL:  http://localhost:5273/
+- Authorization callback URL: http://localhost:5273/signin-github
+
+Then click **Register application**. 
+
+Once the credientials has been created, add the new user-secrets by entering the following commands in the terminal:
+
+    dotnet user-secrets set "GitHub:ClientID" "[Your Client ID]"
+
+
+    dotnet user-secrets set "GitHub:ClientSecret" "[Your Client Secret]"
+
+
 Next, set up a user secret containing a connection string using the
 following command:
 
@@ -196,10 +219,9 @@ following command:
     dotnet user-secrets set "AzureStorage__ConnectionString" "[insert connection string]"
 
 
-Here, `[insert connection string]` should be replaced with an Azure
-Storage connection string. If the user are not in possession of the connection string, we have implemented a
-Note that the connection string must be entered as one continuous
-string.
+The placeholder [insert connection string] should be replaced with your Azure Storage connection string. For security reasons, the actual connection string has been shared with the course leader through a secure channel outside of GitHub.
+
+**Important:** When entering the connection string, ensure it is formatted as a single, unbroken line of text.
 
 Once the user secret has been created, the program can be run from the
 same directory using one of the following commands:
